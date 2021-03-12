@@ -1,0 +1,248 @@
+service: unishop-settings-api
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: settings
+    MODULE_DATA_KEY: settingsData
+    DB_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+
+functions:
+  menuGetOne:
+    handler: src/controllers/menuController.getOne
+    events:
+      - http:
+          path: /menu/{id}
+          method: get
+          cors: true
+
+  menuGetList:
+    handler: src/controllers/menuController.getList
+    events:
+      - http:
+          path: /menu
+          method: get
+          cors: true
+
+  menuGetListTest:
+    handler: src/controllers/menuController.getListTest
+    events:
+      - http:
+          path: /menu/test
+          method: get
+          cors: true
+
+  menuCreate:
+    handler: src/controllers/menuController.create
+    events:
+      - http:
+          path: /menu
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  menuEdit:
+    handler: src/controllers/menuController.edit
+    events:
+      - http:
+          path: /menu
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  menuDeleteOne:
+    handler: src/controllers/menuController.deleteOne
+    events:
+      - http:
+          path: /menu/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  menuGetPublish:
+    handler: src/controllers/menuController.getPublish
+    events:
+      - http:
+          path: /publish/menu/{countryCode}
+          method: get
+          cors: true
+  countryCreate:
+    handler: src/controllers/countryControllerV2.createCountry
+    events:
+      - http:
+          path: /country-create
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  countrySelect:
+    handler: src/controllers/countryControllerV2.getCountry
+    events:
+      - http:
+          path: /country
+          method: get
+          cors: true
+  countryDelete:
+    handler: src/controllers/countryControllerV2.deleteOne
+    events:
+      - http:
+          path: /country/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  countrySelectExpress:
+    handler: src/controllers/countryControllerV2.getCountryExpress
+    events:
+      - http:
+          path: /countryExpress
+          method: get
+          cors: true
+
+  countrySelectFilter:
+    handler: src/controllers/countryControllerV2.getCountry_filter
+    events:
+      - http:
+          path: /country/enable
+          method: get
+          cors: true
+  countrySelectFilterExpress:
+    handler: src/controllers/countryControllerV2.getCountry_filterExpress
+    events:
+      - http:
+          path: /countryExpress/enable
+          method: get
+          cors: true
+
+  CountryEdit:
+    handler: src/controllers/countryControllerV2.CountryEdit
+    events:
+      - http:
+          path: /country
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  CountryEditExpress:
+    handler: src/controllers/countryControllerV2.CountryEditExpress
+    events:
+      - http:
+          path: /countryExpress
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  quotesGetRandomOne:
+    handler: src/controllers/quotesController.getRandomOne
+    events:
+      - http:
+          path: /randomQuotes/{type}
+          method: get
+          cors: true
+
+  settingsGetOne:
+    handler: src/controllers/settingsController.getOne
+    events:
+      - http:
+          path: /data/{countryCode}
+          method: get
+          cors: true
+  settingsEdit:
+    handler: src/controllers/settingsController.edit
+    events:
+      - http:
+          path: /data
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  testTimeout:
+    handler: src/controllers/settingsController.testTimeout
+    events:
+      - http:
+          path: /testTimeout
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

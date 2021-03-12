@@ -1,0 +1,101 @@
+<html>
+<head>
+	<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=utf-8">
+	<title>PG 비인증 승인 API 테스트</title>
+	<style type="text/css">
+
+	</style>
+</head>
+<body>
+	<p align=center><u><b>PG 구인증(1300) 승인 API 테스트</b></u></p>
+<form name="mfrm" method="post" action="">
+<script>
+  var hkey = 'A4E76BDA337DCCA95298FB495A84D369';
+  var ekey = '68704BA2FF30FFE903774860D8FCCFF2';
+
+  var charset = 'utf-8';
+  var sndStoreid = '2999199999';
+  var sndMsalt = 'MA01';
+  var sndAmount = '1004';
+  var sndCurrencyType = '0';
+
+  var sndOrdernumber = 'KS';
+  var sndOrdername = '홍길동';
+  var sndGoodname = '빵가게';
+
+  var e_card_no = '948250';
+  var e_expiry_yymm ="2402";
+	var e_owner_id = "620101";
+  var e_pin_2 = '32';
+
+  var etoken = "";
+
+  var send_url = '';
+  var send_msg = '';
+  var recv_msg = '';
+
+
+
+
+
+//http://210.181.28.134/store/PAY_PROXY/api001/cardauth.jsp
+</script>
+<table  border="1" cellspacing="0" width=100% cellpadding=2 bordercolordark="#ffffff" bordercolorlight="#aaaaaa">
+	<tr>
+		<td colspan=2>국내 구인증 승인 <input type=button name="sbtn" onclick="javascript:document.forms[0].submit();" value="전송"/></td>
+	</tr>
+	<tr>
+		<td colspan=2>요청정보<hr/></td>
+	</tr>
+	<tr><td align="left" bgcolor="#f1f1f1">요청문자셋           </td><td>
+  <input type='text' name="sndCharset"        value='<%=_CHAR_SET       %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">상점아이디           </td><td><input type='text' name="sndStoreid"        value='<%=_STORE_ID       %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">MSALT               </td><td><input type='text' name="sndMsalt"          value='<%=_MSALT          %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">ETOKEN              </td><td><input type='text' name="sndEtoken"         value='<%=_ETOKEN         %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">주문번호             </td><td><input type='text' name="sndOrdernumber"    value='<%=_ORDER_NUMBER   %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">주문자명             </td><td><input type='text' name="sndOrdername"      value='<%=_ORDER_NAME     %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">상품명               </td><td><input type='text' name="sndGoodname"       value='<%=_GOOD_NAME      %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">결제금액             </td><td><input type='text' name="sndAmount"         value='<%=_AMOUNT         %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">통화구분             </td><td><input type='text' name="sndCurrencyType"   value='<%=_CURRENCY_TYPE  %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">카드번호             </td><td><input type='text' name="e_card_no"         value='<%=_e_card_no      %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">유효기간(YYMM)       </td><td><input type='text' name="e_expiry_yymm"     value='<%=_e_expiry_yymm  %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">생년월일             </td><td><input type='text' name="e_owner_id"        value='<%=_e_owner_id     %>' width=100 ></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">비번앞2자리           </td><td><input type='text' name="e_pin_2"           value='<%=_e_pin_2       %>' width=100 ></td></tr>
+
+	<tr>
+		<td colspan=2>응답정보<hr/></td>
+	</tr>
+	<tr><td align="left" bgcolor="#f1f1f1">성공여부(O/X)        </td><td><%=r_authyn %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">거래번호             </td><td><%=r_trno   %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">처리일자             </td><td><%=r_trddt  %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">처리시간             </td><td><%=r_trdtm  %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">승인금액             </td><td><%=r_amt    %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">승인번호             </td><td><%=r_authno %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">응답메세지1          </td><td><%=r_msg1   %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">응답메세지2          </td><td><%=r_msg2   %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">주문번호             </td><td><%=r_ordno  %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">발급사코드           </td><td><%=r_isscd  %></td></tr>
+	<tr><td align="left" bgcolor="#f1f1f1">매입사코드           </td><td><%=r_aqucd  %></td></tr>
+
+	<tr>
+		<td colspan=2>연동URL<hr/></td>
+	</tr>
+	<tr><td colspan="2"><%=send_url %></td></tr>
+	<tr>
+		<td colspan=2>요청메세지<hr/></td>
+	</tr>
+
+	<tr><td colspan="2"><%=send_msg %></td></tr>
+	<tr>
+		<td colspan=2>응답메세지<hr/></td>
+	</tr>
+
+	<tr><td colspan="2"><%=recv_msg %></td></tr>
+</table>
+		</td>
+	</tr>
+</table>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "lambda-unishop-enroll-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:verificationGetList": "serverless deploy function --function verificationGetList --verbose --stage dev",
+    "dev-deploy:verificationEditMultiple": "serverless deploy function --function verificationEditMultiple --verbose --stage dev",
+    "dev-deploy:verificationMoveImages": "serverless deploy function --function verificationMoveImages --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:verificationGetList": "serverless deploy function --function verificationGetList --verbose --stage prod",
+    "prod-deploy:verificationEditMultiple": "serverless deploy function --function verificationEditMultiple --verbose --stage prod",
+    "prod-deploy:verificationMoveImages": "serverless deploy function --function verificationMoveImages --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-enroll-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-unishop-enroll-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-unishop-enroll-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.788.0",
+    "serverless-domain-manager": "^5.1.0"
+  },
+  "dependencies": {
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
+  }
+}

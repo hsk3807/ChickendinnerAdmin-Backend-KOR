@@ -1,0 +1,160 @@
+
+service: unishop-news-api
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+  funcNameBlogPostGet:
+    dev: unishop-blog-posts-api-dev-blogPostGet
+    prod: unishop-blog-posts-api-prod-blogPostGet
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: news
+    DB_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+    FUNC_NAME_BLOGPOST_GET: ${self:custom.funcNameBlogPostGet.${self:provider.stage}}
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeAsync"
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:*:*:*"
+
+functions:
+  newsGetList:
+    handler: src/controllers/newsController.getList
+    events:
+      - http:
+          path: /datalist/{country_code}
+          method: get
+          cors: true
+  newsAdd:
+    handler: src/controllers/newsController.add
+    events:
+      - http:
+          path: /data
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  newsEdit:
+    handler: src/controllers/newsController.edit
+    events:
+      - http:
+          path: /data/
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  newsGetOne:
+    handler: src/controllers/newsController.getOne
+    events:
+      - http:
+          path: /data/{id}
+          method: get
+          cors: true
+  newsRemove:
+    handler: src/controllers/newsController.remove
+    events:
+      - http:
+          path: /data/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  newsGetPublic:
+    handler: src/controllers/newsController.getListPublice
+    events:
+      - http:
+          path: /data-public/{country_code}/{type}
+          method: get
+          cors: true
+
+  # newsBlogPostGetSchema:
+  #   handler: src/controllers/newsBlogPostController.getSchema
+  #   events:
+  #     - http:
+  #         path: /blogpostSchema
+  #         method: get
+  #         cors: true
+  # newsBlogPostGetOne:
+  #   handler: src/controllers/newsBlogPostController.getOne
+  #   events:
+  #     - http:
+  #         path: /blogpost/{id}
+  #         method: get
+  #         cors: true
+  # newsBlogPostAdd:
+  #   handler: src/controllers/newsBlogPostController.add
+  #   events:
+  #     - http:
+  #         path: /blogpost
+  #         method: post
+  #         cors: true
+  #         authorizer:
+  #           arn: ${self:custom.useVerifyTokenArn}
+  #           resultTtlInSeconds: 0
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

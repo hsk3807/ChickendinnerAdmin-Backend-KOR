@@ -1,0 +1,44 @@
+service: lambda-payment-test
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}-v2
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  memorySize: 128         # optional, in MB, default: 1024
+  timeout: 30             # optional, in seconds, default: 6
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: payments
+
+functions:
+ api:
+   handler: src/lambda.handler
+   events:
+     - http: ANY /
+     - http: ANY {proxy+}

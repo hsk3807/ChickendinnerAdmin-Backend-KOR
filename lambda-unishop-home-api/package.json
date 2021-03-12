@@ -1,0 +1,40 @@
+{
+  "name": "lambda-unishop-home-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:addHome": "serverless deploy function --function addHome --verbose --stage dev",
+    "dev-deploy:getOneHome": "serverless deploy function --function getOneHome --verbose --stage dev",
+    "dev-deploy:editOneHome": "serverless deploy function --function editOneHome --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:addHome": "serverless deploy function --function addHome --verbose --stage prod",
+    "prod-deploy:getOneHome": "serverless deploy function --function getOneHome --verbose --stage prod",
+    "deprodv-deploy:editOneHome": "serverless deploy function --function editOneHome --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-home-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-unishop-home-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-unishop-home-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1"
+  }
+}

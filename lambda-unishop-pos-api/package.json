@@ -1,0 +1,25 @@
+{
+  "name": "lambda-unishop-pos-api-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:posGetLinks": "serverless deploy function --function posGetLinks --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:posGetLinks": "serverless deploy function --function posGetLinks --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.714.0",
+    "serverless-domain-manager": "^4.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "joi": "^17.3.0",
+    "lib-global-configs": "file:../lib/global-configs"
+  }
+}

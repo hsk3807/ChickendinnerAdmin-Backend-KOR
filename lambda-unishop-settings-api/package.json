@@ -1,0 +1,51 @@
+{
+  "name": "lambda-unishop-settings-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:menuGetOne": "serverless deploy function --function menuGetOne --verbose --stage dev",
+    "dev-deploy:menuGetList": "serverless deploy function --function menuGetList --verbose --stage dev",
+    "dev-deploy:menuCreate": "serverless deploy function --function menuCreate --verbose --stage dev",
+    "dev-deploy:menuEdit": "serverless deploy function --function menuEdit --verbose --stage dev",
+    "dev-deploy:menuDeleteOne": "serverless deploy function --function menuDeleteOne --verbose --stage dev",
+    "dev-deploy:menuGetPublish": "serverless deploy function --function menuGetPublish --verbose --stage dev",
+    "dev-deploy:settingsGetOne": "serverless deploy function --function settingsGetOne --verbose --stage dev",
+    "dev-deploy:settingsEdit": "serverless deploy function --function settingsEdit --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:menuGetOne": "serverless deploy function --function menuGetOne --verbose --stage prod",
+    "prod-deploy:menuGetList": "serverless deploy function --function menuGetList --verbose --stage prod",
+    "prod-deploy:menuCreate": "serverless deploy function --function menuCreate --verbose --stage prod",
+    "prod-deploy:menuEdit": "serverless deploy function --function menuEdit --verbose --stage prod",
+    "prod-deploy:menuDeleteOne": "serverless deploy function --function menuDeleteOne --verbose --stage prod",
+    "prod-deploy:menuGetPublish": "serverless deploy function --function menuGetPublish --verbose --stage prod",
+    "prod-deploy:settingsGetOne": "serverless deploy function --function settingsGetOne --verbose --stage prod",
+    "prod-deploy:settingsEdit": "serverless deploy function --function settingsEdit --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-settings-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-unishop-settings-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-unishop-settings-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.714.0",
+    "serverless-domain-manager": "^4.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "joi": "^17.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
+  }
+}

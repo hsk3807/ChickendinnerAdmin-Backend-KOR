@@ -1,0 +1,181 @@
+
+service: unishop-banner-api
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    DYNAMODB_TABLE_MAIN: unishop_banner_${self:provider.stage}
+    MODULE_KEY: banners
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MAIN}"
+
+functions:
+  createCountry:
+    handler: src/functions/createCountry.handler
+    events:
+      - http:
+          path: /country
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getCountryList:
+    handler: src/functions/getCountryList.handler
+    events:
+      - http:
+          path: /country
+          method: get
+          cors: true
+  addBanner:
+    handler: src/functions/addBanner.handler
+    events:
+      - http:
+          path: /data
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editBanner:
+    handler: src/functions/editBanner.handler
+    events:
+      - http:
+          path: /data
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  removeBanner:
+    handler: src/functions/removeBanner.handler
+    events:
+      - http:
+          path: /data/{countryCode}/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getBannerList:
+    handler: src/functions/getBannerList.handler
+    events:
+      - http:
+          path: /data/{countryCode}
+          method: get
+          cors: true
+  getBanner:
+    handler: src/functions/getBanner.handler
+    events:
+      - http:
+          path: /data/{countryCode}/{id}
+          method: get
+          cors: true
+  getActiveBanner:
+    handler: src/functions/getActiveBanner.handler
+    events:
+      - http:
+          path: /activeBanner/{countryCode}
+          method: get
+          cors: true
+  sortBannerById:
+    handler: src/functions/sortBannerById.handler
+    events:
+      - http:
+          path: /sortById/banner/{countryCode}
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getBannerSchema:
+    handler: src/functions/getBannerSchema.handler
+    events:
+      - http:
+          path: /schema/banner/{countryCode}
+          method: get
+          cors: true
+  editBannerActive:
+    handler: src/functions/editBannerActive.handler
+    events:
+      - http:
+          path: /active/banner/{countryCode}/{id}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  enableBannerMultiple:
+    handler: src/functions/enableBannerMultiple.handler
+    events:
+      - http:
+          path: /enableBannerMultiple/{countryCode}
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

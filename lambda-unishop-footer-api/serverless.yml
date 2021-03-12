@@ -1,0 +1,146 @@
+service: unishop-footer-api
+
+plugins:
+  - serverless-domain-manager
+  - serverless-api-compression
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+    region: ${self:provider.region}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  apiGateway:
+    minimumCompressionSize: 10000
+  environment:
+    DYNAMODB_TABLE_MAIN: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+    MODULE_KEY: footer
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MAIN}"
+
+vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+functions:
+  getCountryCodeList:
+    handler: src/functions/getCountryCodeList.handler
+    events:
+      - http:
+          path: /countryList
+          method: get
+          cors: true
+  getFooterByCountryCode:
+    handler: src/functions/getFooterByCountryCode.handler
+    events:
+      - http:
+          path: /data/{country_code}
+          method: get
+          cors: true
+  getFooterByCountryCodeUser:
+    handler: src/functions/getFooterByCountryCode.handlerUser
+    events:
+      - http:
+          path: /data/public/{country_code}
+          method: get
+          cors: true
+
+  editFooterHeaderOne:
+    handler: src/functions/editFooterMenuByCountryCode.editMenuOne
+    events:
+      - http:
+          path: /data/menuone/{country_code}/
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  addFooterHeaderOne:
+    handler: src/functions/editFooterMenuByCountryCode.addMenuOne
+    events:
+      - http:
+          path: /data/menuone/{country_code}/
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  removeFooterHeader:
+    handler: src/functions/editFooterMenuByCountryCode.removeMenuHeader
+    events:
+      - http:
+          path: /data/menu/{country_code}/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editFooterByCountryCode:
+    handler: src/functions/editFooterByCountryCode.handler
+    events:
+      - http:
+          path: /data/{country_code}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editFooterMenuByCountryCode:
+    handler: src/functions/editFooterMenuByCountryCode.handler
+    events:
+      - http:
+          path: /data/menu/{country_code}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+

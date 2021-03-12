@@ -1,0 +1,47 @@
+{
+  "name": "lambda-unishop-etl-api-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy-debug": "cross-env SLS_DEBUG=* serverless deploy --verbose --stage dev",
+    "dev-deploy:getOnself": "serverless deploy function --function getOnself --verbose --stage dev",
+    "dev-deploy:getOrdersHistory": "serverless deploy function --function getOrdersHistory --verbose --stage dev",
+    "dev-deploy:getGenealogy": "serverless deploy function --function getGenealogy --verbose --stage dev",
+    "dev-deploy:loginTokens": "serverless deploy function --function loginTokens --verbose --stage dev",
+    "dev-deploy:getMenu": "serverless deploy function --function getMenu --verbose --stage dev",
+    "dev-deploy:configGetOne": "serverless deploy function --function configGetOne --verbose --stage dev",
+    "dev-deploy:configEditOne": "serverless deploy function --function configEditOne --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy-debug": "cross-env SLS_DEBUG=* serverless deploy --verbose --stage prod",
+    "prod-deploy:getOnself": "serverless deploy function --function getOnself --verbose --stage prod",
+    "prod-deploy:getOrdersHistory": "serverless deploy function --function getOrdersHistory --verbose --stage prod",
+    "prod-deploy:getGenealogy": "serverless deploy function --function getGenealogy --verbose --stage prod",
+    "prod-deploy:loginTokens": "serverless deploy function --function loginTokens --verbose --stage prod",
+    "prod-deploy:getMenu": "serverless deploy function --function getMenu --verbose --stage prod",
+    "prod-deploy:configGetOne": "serverless deploy function --function configGetOne --verbose --stage prod",
+    "prod-deploy:configEditOne": "serverless deploy function --function configEditOne --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.714.0",
+    "cross-env": "^7.0.3",
+    "serverless-domain-manager": "^5.1.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "axios-curlirize": "^1.3.7",
+    "fast-deep-equal": "^3.1.3",
+    "joi": "^17.4.0",
+    "lib-global-configs": "file:../lib/global-configs",
+    "lib-utils": "file:../lib/utils",
+    "mysql": "^2.18.1"
+  }
+}

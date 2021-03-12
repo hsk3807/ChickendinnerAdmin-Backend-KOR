@@ -1,0 +1,276 @@
+
+service: adapter-api
+
+plugins:
+  - serverless-domain-manager
+  - serverless-api-compression
+
+custom:
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  corsBackend:
+    origin: '*'
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - authorization-hydra
+      - authorization-ushop
+  hydraUrls:
+    dev: https://hydraqa.unicity.net/v5a-test
+    prod: https://hydra.unicity.net/v5a
+  memberCallsUrls:
+    dev: https://member-calls2-kr-dev.unicity.com
+    prod: https://member-calls2-kr.unicity.com
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+  schedule_1:
+    dev: null
+    prod: cron(0,15,30,45 * * * ? *)
+  funcNameGenealogy:
+    dev: adapter-api-dev-getGenealogy
+    prod: adapter-api-prod-getGenealogy
+  funcNameETLGenealogy:
+    dev: adapter-api-dev-etlGetGenealogy
+    prod: adapter-api-prod-etlGetGenealogy
+  funcNameOrderhistory:
+    dev: adapter-api-dev-getOrderHistory
+    prod: adapter-api-prod-getOrderHistory
+  funcNameOnself:
+    dev: adapter-api-dev-getOnself
+    prod: adapter-api-prod-getOnself
+  funcNameETLOnself:
+    dev: adapter-api-dev-etlGetOnSelf
+    prod: adapter-api-prod-etlGetOnSelf
+  funcNameSettingsGetPublishMenu:
+    dev: unishop-settings-api-dev-menuGetPublish
+    prod: unishop-settings-api-prod-menuGetPublish
+  funcNameSettingsGetByCountry:
+    dev: unishop-settings-api-dev-settingsGetOne
+    prod: unishop-settings-api-prod-settingsGetOne
+  funcNamePopup:
+    dev: lambda-unishop-popup-dev-getPublicPopup
+    prod: lambda-unishop-popup-prod-getPublicPopup
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ${opt:region, 'ap-northeast-2'}
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: ${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  apiGateway:
+    minimumCompressionSize: 10000
+  environment:
+    MODULE_KEY: adapter
+    HYDRA_API_URL: ${self:custom.hydraUrls.prod}
+    # HYDRA_API_URL: ${self:custom.hydraUrls.${self:provider.stage}}
+    MEMBER_CALL2_API_URL: ${self:custom.memberCallsUrls.${self:provider.stage}}
+    DB_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+    CACHE_REQUEST_MIN: 30
+    S3_BUCKET_MEDIA: ushop-media.unicity.com
+    FUNC_NAME_GENEALOGY: ${self:custom.funcNameGenealogy.${self:provider.stage}}
+    FUNC_NAME_ETL_GENEALOGY: ${self:custom.funcNameETLGenealogy.${self:provider.stage}}
+    FUNC_NAME_ORDER_HISTORY: ${self:custom.funcNameOrderhistory.${self:provider.stage}}
+    FUNC_NAME_ETL_ONSELF: ${self:custom.funcNameETLOnself.${self:provider.stage}}
+    FUNC_NAME_ONSELF: ${self:custom.funcNameOnself.${self:provider.stage}}
+    FUNC_NAME_SETTINGS_GET_PUBLISH_MENU: ${self:custom.funcNameSettingsGetPublishMenu.${self:provider.stage}}
+    FUNC_NAME_SETTINGS_GET_BY_COUNTRY: ${self:custom.funcNameSettingsGetByCountry.${self:provider.stage}}
+    FUNC_NAME_POPUP_PUBLISH_POPUP: ${self:custom.funcNamePopup.${self:provider.stage}}
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*
+        - logs:CreateLogGroup,
+        - logs:CreateLogStream,
+        - logs:PutLogEvents
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeAsync"
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:*:*:*"
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+
+functions:
+  getDashboard:
+    handler: src/functions/getDashboard.handler
+    events:
+      - http:
+          path: /dashboard
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  etlGetDashboard:
+    handler: src/functions/etl/getDashboard.handler
+    events:
+      - http:
+          path: /etl/dashboard
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  getGenealogy:
+    handler: src/functions/getGenealogy.handler
+    events:
+      - http:
+          path: /genealogy
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  etlGetGenealogy:
+    handler: src/functions/etl/getGenealogy.handler
+    events:
+      - http:
+          path: /etl/genealogy
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  etlGetOnself:
+    handler: src/functions/etl/getOnself.handler
+    events:
+      - http:
+          path: /etl/onself
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  etlGetCommission:
+    handler: src/functions/etl/getCommission.handler
+    events:
+      - http:
+          path: /etl/commission
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  getOnself:
+    handler: src/functions/getOnself.handler
+    events:
+      - http:
+          path: /onself
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  getOrderHistory:
+    handler: src/functions/getOrderHistory.handler
+    events:
+      - http:
+          path: /orderHistory
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  addRecentAddress:
+    handler: src/functions/addRecentAddress.handler
+    events:
+      - http:
+          path: /recentAddress
+          method: post
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  getRecentAddressList:
+    handler: src/functions/getRecentAddressList.handler
+    events:
+      - http:
+          path: /recentAddress
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  getMenu:
+    handler: src/functions/getMenu.handler
+    events:
+      - http:
+          path: /menu
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  getMenuTest:
+    handler: src/functions/getMenuTest.handler
+    events:
+      - http:
+          path: /menutest
+          method: get
+          cors: ${self:custom.corsBackend}
+          # cors: true
+    timeout: 30
+  loginTokens:
+    handler: src/functions/loginTokens.handler
+    events:
+      - http:
+          path: /loginTokens
+          method: post
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+  autoRefreshGenealogy:
+    handler: src/functions/autoRefreshGenealogy.handler
+    events:
+      - schedule: ${self:custom.schedule_1.${self:provider.stage}}
+    timeout: 900
+
+  etlAutoRefreshGenealogy:
+    handler: src/functions/etl/etlAutoRefreshGenealogy.handler
+    events:
+      - schedule: ${self:custom.schedule_1.${self:provider.stage}}
+    timeout: 900
+
+  etlGetOrderHistory:
+    handler: src/functions/etl/getOrderHistory.handler
+    events:
+      - http:
+          path: /etl/orderHistory
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

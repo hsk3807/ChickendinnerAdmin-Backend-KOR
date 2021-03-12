@@ -1,0 +1,51 @@
+{
+  "name": "lambda-unishop-files-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "----------------------------- DEVELOP -----------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:addDownloadFileFromTemp": "serverless deploy function --function addDownloadFileFromTemp --verbose --stage dev",
+    "dev-deploy:getDownloadFileList": "serverless deploy function --function getDownloadFileList --verbose --stage dev",
+    "dev-deploy:editDownloadFile": "serverless deploy function --function editDownloadFile --verbose --stage dev",
+    "dev-deploy:getDownloadFileUrl": "serverless deploy function --function getDownloadFileUrl --verbose --stage dev",
+    "dev-deploy:sortDownloadFilesById": "serverless deploy function --function sortDownloadFilesById --verbose --stage dev",
+    "dev-deploy:deleteDownloadFileMultiple": "serverless deploy function --function deleteDownloadFileMultiple --verbose --stage dev",
+    "dev-deploy:editDownloadFileEnableMultiple": "serverless deploy function --function editDownloadFileEnableMultiple --verbose --stage dev",
+    "dev-deploy:getPublishFilesList": "serverless deploy function --function getPublishFilesList --verbose --stage dev",
+    "dev-deploy:getPublishFileUrl": "serverless deploy function --function getPublishFileUrl --verbose --stage dev",
+    "dev-deploy:getContainFiles": "serverless deploy function --function getContainFiles --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------- PRODUCTION -------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:addDownloadFileFromTemp": "serverless deploy function --function addDownloadFileFromTemp --verbose --stage prod",
+    "prod-deploy:getDownloadFileList": "serverless deploy function --function getDownloadFileList --verbose --stage prod",
+    "prod-deploy:editDownloadFile": "serverless deploy function --function editDownloadFile --verbose --stage prod",
+    "prod-deploy:getDownloadFileUrl": "serverless deploy function --function getDownloadFileUrl --verbose --stage prod",
+    "prod-deploy:sortDownloadFilesById": "serverless deploy function --function sortDownloadFilesById --verbose --stage prod",
+    "prod-deploy:deleteDownloadFileMultiple": "serverless deploy function --function deleteDownloadFileMultiple --verbose --stage prod",
+    "prod-deploy:editDownloadFileEnableMultiple": "serverless deploy function --function editDownloadFileEnableMultiple --verbose --stage prod",
+    "prod-deploy:getPublishFilesList": "serverless deploy function --function getPublishFilesList --verbose --stage prod",
+    "prod-deploy:getPublishFileUrl": "serverless deploy function --function getPublishFileUrl --verbose --stage prod",
+    "prod-deploy:getContainFiles": "serverless deploy function --function getContainFiles --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod",
+    "local": "serverless offline start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-files-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^3.4.0"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "lambda-unishop-authorization",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "---------------------------- DEVELOP ----------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:hello": "serverless deploy function --function hello --verbose --stage dev",
+    "dev-deploy:userLogin": "serverless deploy function --function userLogin --verbose --stage dev",
+    "dev-deploy:employeeLogin": "serverless deploy function --function employeeLogin --verbose --stage dev",
+    "dev-deploy:employeeRefresh": "serverless deploy function --function employeeRefresh --verbose --stage dev",
+    "dev-deploy:verifyToken": "serverless deploy function --function verifyToken --verbose --stage dev",
+    "dev-deploy:getUserProfile": "serverless deploy function --function getUserProfile --verbose --stage dev",
+    "dev-deploy:editUserProfile": "serverless deploy function --function editUserProfile --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "---------------------------- PRODUCTION ----------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:hello": "serverless deploy function --function hello --verbose --stage prod",
+    "prod-deploy:userLogin": "serverless deploy function --function userLogin --verbose --stage prod",
+    "prod-deploy:employeeLogin": "serverless deploy function --function employeeLogin --verbose --stage prod",
+    "prod-deploy:employeeRefresh": "serverless deploy function --function employeeRefresh --verbose --stage prod",
+    "prod-deploy:verifyToken": "serverless deploy function --function verifyToken --verbose --stage prod",
+    "prod-deploy:getUserProfile": "serverless deploy function --function getUserProfile --verbose --stage prod",
+    "prod-deploy:editUserProfile": "serverless deploy function --function editUserProfile --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-authorization.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "fast-deep-equal": "^3.1.1",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "lib-global-configs": "file:../lib/global-configs",
+    "lodash.isequal": "^4.5.0",
+    "qs": "^6.8.0"
+  }
+}

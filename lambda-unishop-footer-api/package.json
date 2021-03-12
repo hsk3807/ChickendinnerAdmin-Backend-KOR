@@ -1,0 +1,41 @@
+{
+  "name": "unishop-footer-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "----------------------------- DEVELOP -----------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:getCountryCodeList": "serverless deploy function --function getCountryCodeList --verbose --stage dev",
+    "dev-deploy:getFooterByCountryCode": "serverless deploy function --function getFooterByCountryCode --verbose --stage dev",
+    "dev-deploy:editFooterByCountryCode": "serverless deploy function --function editFooterByCountryCode --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------- PRODUCTION -------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:getCountryCodeList": "serverless deploy function --function getCountryCodeList --verbose --stage prod",
+    "prod-deploy:getFooterByCountryCode": "serverless deploy function --function getFooterByCountryCode --verbose --stage prod",
+    "prod-deploy:editFooterByCountryCode": "serverless deploy function --function editFooterByCountryCode --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/unishop-footer-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.465.0",
+    "serverless-api-compression": "^1.0.1",
+    "serverless-domain-manager": "^3.3.0",
+    "serverless-dynamodb-local": "^0.2.37",
+    "serverless-offline": "^4.10.6"
+  },
+  "dependencies": {
+    "10": "0.0.1",
+    "@hapi/joi": "^15.0.3",
+    "axios": "^0.20.0",
+    "deep-diff": "^1.0.2",
+    "generate-schema": "^2.6.0",
+    "jsonwebtoken": "^8.5.1"
+  }
+}

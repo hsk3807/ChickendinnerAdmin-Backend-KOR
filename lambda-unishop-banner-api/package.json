@@ -1,0 +1,50 @@
+{
+  "name": "lambda-unishop-banner-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "----------------------------- DEVELOP -----------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:createCountry": "serverless deploy function --function createCountry --verbose --stage dev",
+    "dev-deploy:addBanner": "serverless deploy function --function addBanner --verbose --stage dev",
+    "dev-deploy:editBanner": "serverless deploy function --function editBanner --verbose --stage dev",
+    "dev-deploy:removeBanner": "serverless deploy function --function removeBanner --verbose --stage dev",
+    "dev-deploy:getBannerList": "serverless deploy function --function getBannerList --verbose --stage dev",
+    "dev-deploy:sortBannerById": "serverless deploy function --function sortBannerById --verbose --stage dev",
+    "dev-deploy:getBannerSchema": "serverless deploy function --function getBannerSchema --verbose --stage dev",
+    "dev-deploy:getActiveBanner": "serverless deploy function --function getActiveBanner --verbose --stage dev",
+    "dev-deploy:editBannerActive": "serverless deploy function --function editBannerActive --verbose --stage dev",
+    "dev-deploy:enableBannerMultiple": "serverless deploy function --function enableBannerMultiple --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------- PRODUCTION -------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:createCountry": "serverless deploy function --function createCountry --verbose --stage prod",
+    "prod-deploy:addBanner": "serverless deploy function --function addBanner --verbose --stage prod",
+    "prod-deploy:editBanner": "serverless deploy function --function editBanner --verbose --stage prod",
+    "prod-deploy:removeBanner": "serverless deploy function --function removeBanner --verbose --stage prod",
+    "prod-deploy:getBannerList": "serverless deploy function --function getBannerList --verbose --stage prod",
+    "prod-deploy:sortBannerById": "serverless deploy function --function sortBannerById --verbose --stage prod",
+    "prod-deploy:getBannerSchema": "serverless deploy function --function getBannerSchema --verbose --stage prod",
+    "prod-deploy:getActiveBanner": "serverless deploy function --function getActiveBanner --verbose --stage prod",
+    "prod-deploy:editBannerActive": "serverless deploy function --function editBannerActive --verbose --stage prod",
+    "prod-deploy:enableBannerMultiple": "serverless deploy function --function enableBannerMultiple --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod",
+    "local": "serverless offline start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-banner-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^3.3.2"
+  }
+}

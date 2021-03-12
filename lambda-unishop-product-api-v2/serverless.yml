@@ -1,0 +1,242 @@
+service: unishop-product-api-v2
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+    test: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+    test: member-calls2-kr-dev.unicity.com
+  extendPath:
+    dev: null
+    prod: null
+    test: "-test"
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}-v2${self:custom.extendPath.${self:provider.stage}, ''}
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+  dbName:
+    dev: calls-dev
+    prod: calls
+    test: calls-test
+  schedule_1:
+    dev: null
+    prod: rate(1 minute)
+    test: null
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: products
+    DB_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+
+functions:
+  productUpdateInventory:
+    handler: src/controllers/productWarehouseController.updateInventory
+    events:
+      - schedule: ${self:custom.schedule_1.${self:provider.stage}}
+    timeout: 900
+
+  productWarehouseGetList:
+    handler: src/controllers/productWarehouseController.getList
+    events:
+      - http:
+          path: /warehouse
+          method: get
+          cors: true
+
+  productGetOne:
+    handler: src/controllers/productController.getOne
+    events:
+      - http:
+          path: /data/{id}
+          method: get
+          cors: true
+
+  productGetList:
+    handler: src/controllers/productController.getList
+    events:
+      - http:
+          path: /data
+          method: get
+          cors: true
+
+  productCreate:
+    handler: src/controllers/productController.create
+    events:
+      - http:
+          path: /data
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productEditMultiple:
+    handler: src/controllers/productController.editMultiple
+    events:
+      - http:
+          path: /data
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productRemove:
+    handler: src/controllers/productController.remove
+    events:
+      - http:
+          path: /data/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productGetPublish:
+    handler: src/controllers/productController.getPublish
+    events:
+      - http:
+          path: /publish/{countryCode}
+          method: get
+          cors: true
+
+  productCategoryGetList:
+    handler: src/controllers/productCategoryController.getList
+    events:
+      - http:
+          path: /category
+          method: get
+          cors: true
+
+  productCategoryCreate:
+    handler: src/controllers/productCategoryController.create
+    events:
+      - http:
+          path: /category
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productCategoryRemove:
+    handler: src/controllers/productCategoryController.remove
+    events:
+      - http:
+          path: /category/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productCategoryEditMultiple:
+    handler: src/controllers/productCategoryController.editMultiple
+    events:
+      - http:
+          path: /category
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productTagGetList:
+    handler: src/controllers/productTagController.getList
+    events:
+      - http:
+          path: /tag
+          method: get
+          cors: true
+
+  productTagEditMultiple:
+    handler: src/controllers/productTagController.editMultiple
+    events:
+      - http:
+          path: /tag
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+  productTagCreate:
+    handler: src/controllers/productTagController.create
+    events:
+      - http:
+          path: /tag
+          method: post
+          cors: true
+
+  productTagRemove:
+    handler: src/controllers/productTagController.remove
+    events:
+      - http:
+          path: /tag/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

@@ -1,0 +1,52 @@
+{
+  "name": "lambda-remote-storage-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:setItem": "serverless deploy function --function setItem --verbose --stage dev",
+    "dev-deploy:getItem": "serverless deploy function --function getItem --verbose --stage dev",
+    "dev-deploy:removeItem": "serverless deploy function --function removeItem --verbose --stage dev",
+    "dev-deploy:brokerDeposit": "serverless deploy function --function brokerDeposit --verbose --stage dev",
+    "dev-deploy:brokerWithdraw": "serverless deploy function --function brokerWithdraw --verbose --stage dev",
+    "dev-deploy:cartSetItems": "serverless deploy function --function cartSetItems --verbose --stage dev",
+    "dev-deploy:cartGetItems": "serverless deploy function --function cartGetItems --verbose --stage dev",
+    "dev-deploy:cartSetCartItem": "serverless deploy function --function cartSetCartItem --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:setItem": "serverless deploy function --function setItem --verbose --stage prod",
+    "prod-deploy:getItem": "serverless deploy function --function getItem --verbose --stage prod",
+    "prod-deploy:removeItem": "serverless deploy function --function removeItem --verbose --stage prod",
+    "prod-deploy:brokerDeposit": "serverless deploy function --function brokerDeposit --verbose --stage prod",
+    "prod-deploy:brokerWithdraw": "serverless deploy function --function brokerWithdraw --verbose --stage prod",
+    "prod-deploy:cartSetItems": "serverless deploy function --function cartSetItems --verbose --stage prod",
+    "prod-deploy:cartGetItems": "serverless deploy function --function cartGetItems --verbose --stage prod",
+    "prod-deploy:cartSetCartItem": "serverless deploy function --function cartSetCartItem --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-remote-storage-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-remote-storage-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-remote-storage-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^9.0.0",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1",
+    "uuid": "^7.0.3"
+  }
+}

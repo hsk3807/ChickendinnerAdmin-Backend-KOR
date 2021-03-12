@@ -1,0 +1,47 @@
+{
+  "name": "lambda-unishop-news-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "----------------------------- DEVELOP -----------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:newsGetList": "serverless deploy function --function newsGetList --verbose --stage dev",
+    "dev-deploy:newsGet": "serverless deploy function --function newsGet --verbose --stage dev",
+    "dev-deploy:newsAdd": "serverless deploy function --function newsAdd --verbose --stage dev",
+    "dev-deploy:newsRemove": "serverless deploy function --function newsRemove --verbose --stage dev",
+    "dev-deploy:newsEdit": "serverless deploy function --function newsEdit --verbose --stage dev",
+    "dev-deploy:newsBlogPostGetSchema": "serverless deploy function --function newsBlogPostGetSchema --verbose --stage dev",
+    "dev-deploy:newsBlogPostGetOne": "serverless deploy function --function newsBlogPostGetOne --verbose --stage dev",
+    "dev-deploy:newsBlogPostAdd": "serverless deploy function --function newsBlogPostAdd --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------- PRODUCTION -------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:newsGetList": "serverless deploy function --function newsGetList --verbose --stage prod",
+    "prod-deploy:newsGet": "serverless deploy function --function newsGet --verbose --stage prod",
+    "prod-deploy:newsAdd": "serverless deploy function --function newsAdd --verbose --stage prod",
+    "prod-deploy:newsRemove": "serverless deploy function --function newsRemove --verbose --stage prod",
+    "prod-deploy:newsEdit": "serverless deploy function --function newsEdit --verbose --stage prod",
+    "prod-deploy:newsBlogPostGetSchema": "serverless deploy function --function newsBlogPostGetSchema --verbose --stage prod",
+    "prod-deploy:newsBlogPostGetOne": "serverless deploy function --function newsBlogPostGetOne --verbose --stage prod",
+    "prod-deploy:newsBlogPostAdd": "serverless deploy function --function newsBlogPostAdd --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod",
+    "local": "serverless offline start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-news-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^2.0.1",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1"
+  }
+}

@@ -1,0 +1,51 @@
+<!-- views/kspay_result.ejs -->
+
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>kspay result</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  https://member-calls2-kr-dev.unicity.com
+  <script>
+var cancle_url = "/checkout/summary";
+	var failed_url = "/checkout/payment-response/failed";
+	var success_url = "/checkout/payment-response/success";
+/*
+
+결제 취소 및 실패
+{
+  reCommConId: '',
+  reCommType: '',
+  reHash: '',
+  reEncData: '',
+  reCnclType: '1',
+  ECH: ''
+}
+*/
+
+/*
+결제 성공
+{
+  reCommConId: 'w2177fc299f6bba30304',
+  reCommType: 'WH',
+  reHash: '1614843278450:AST:AD7F0B1FA7248C28A1E480E29AA46E2F',
+  reEncData: '',
+  reCnclType: '0',
+  ECH: ''
+}
+*/
+  function init(){
+    var reCnclType =  '<%- reCnclType %>';
+    var reUrl =  '<%- reUrl %>';
+    if(Number(reCnclType) === 1) window.location.href = reUrl + cancle_url;
+    if(Number(reCnclType) === 0) window.location.href = reUrl + success_url;
+  }
+  init();
+  </script>
+
+
+  <body>
+  </body>
+</html>

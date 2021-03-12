@@ -1,0 +1,198 @@
+service: unishop-etl-api-v2
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  dbName:
+    dev: calls-dev
+    prod: calls
+  hydraUrls:
+    # dev: https://hydraqa.unicity.net/v5a-test
+    dev: https://hydra.unicity.net/v5a
+    prod: https://hydra.unicity.net/v5a
+  memberCalls2Urls:
+    dev: https://member-calls2-dev.unicity.com
+    prod: https://member-calls2.unicity.com
+  corsBackend:
+    origin: '*'
+    headers:
+      - X-Amz-Date
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - Content-Type
+      - Authorization
+      - authorization-hydra
+      - authorization-ushop
+    allowCredentials: true
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+  funcNameSettingsGetOne:
+    dev: unishop-settings-api-dev-settingsGetOne
+    prod: unishop-settings-api-prod-settingsGetOne
+  funcNameMenuGetPublish:
+    dev: unishop-settings-api-dev-menuGetPublish
+    prod: unishop-settings-api-prod-menuGetPublish
+  funcNameGetPublicPopup:
+    dev: lambda-unishop-popup-dev-getPublicPopup
+    prod: lambda-unishop-popup-prod-getPublicPopup
+  funcNameEtlV2GetGenealogy:
+    dev: unishop-etl-api-v2-dev-getGenealogy
+    prod: unishop-etl-api-v2-prod-getGenealogy
+  funcNameEtlV2FetchGenealogy:
+    dev: unishop-etl-api-v2-dev-fetchGenealogy
+    prod: unishop-etl-api-v2-prod-fetchGenealogy
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: etlV2
+    API_URL_HYDRA: ${self:custom.hydraUrls.${self:provider.stage}}
+
+    DB_CALLS_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_CALLS_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_CALLS_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_CALLS_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+
+    FUNC_NAME_SETTINGS_GET_ONE: ${self:custom.funcNameSettingsGetOne.${self:provider.stage}}
+    FUNC_NAME_MENU_GET_PUBLISH: ${self:custom.funcNameMenuGetPublish.${self:provider.stage}}
+    FUNC_NAME_GET_PUBLISH_POPUP: ${self:custom.funcNameGetPublicPopup.${self:provider.stage}}
+
+    FUNC_NAME_ETL_V2_GET_GENEALOGY: ${self:custom.funcNameEtlV2GetGenealogy.${self:provider.stage}}
+    FUNC_NAME_ETL_V2_FETCH_GENEALOGY: ${self:custom.funcNameEtlV2FetchGenealogy.${self:provider.stage}}
+
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeAsync"
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:*:*:*"
+
+functions:
+
+  fetchGenealogy:
+    handler: src/controllers/etlController.fetchGenealogy
+    timeout: 30
+
+  getOnself:
+    handler: src/controllers/etlController.getOnself
+    events:
+      - http:
+          path: /onself
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  getOrdersHistory:
+    handler: src/controllers/etlController.getOrdersHistory
+    events:
+      - http:
+          path: /ordersHistory
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  getGenealogy:
+    handler: src/controllers/etlController.getGenealogy
+    events:
+      - http:
+          path: /genealogy
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  loginTokens:
+    handler: src/controllers/etlController.loginTokens
+    events:
+      - http:
+          path: /loginTokens
+          method: post
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  getMenu:
+    handler: src/controllers/etlController.getMenu
+    events:
+      - http:
+          path: /menu
+          method: get
+          cors: ${self:custom.corsBackend}
+    timeout: 30
+
+  configGetOne:
+    handler: src/controllers/etlConfigController.getOne
+    events:
+      - http:
+          path: /config/{ushopCountryCode}
+          method: get
+          cors: true
+
+  configEditOne:
+    handler: src/controllers/etlConfigController.editOne
+    events:
+      - http:
+          path: /config
+          method: patch
+          cors: ${self:custom.corsBackend}
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

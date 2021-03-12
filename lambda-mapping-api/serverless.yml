@@ -1,0 +1,97 @@
+service: unishop-mapping-api
+
+custom:
+  corsBackend:
+    origin: "*"
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+    allowCredentials: false
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: etl
+
+functions:
+  TWNmappingAddress:
+    handler: src/controllers/address.TWNconcatAddress
+    events:
+      - http:
+          path: /TWN/mapping_data
+          method: post
+          cors: true
+  TWNmapping:
+    handler: src/controllers/address.TWNmappingAddress
+    events:
+      - http:
+          path: /TWN/mapping_address
+          method: post
+          cors: true
+  autoshipList:
+    handler: src/services/autoship.autoshipList
+    events:
+      - http:
+          path: autoship/list
+          method: get
+          cors: true
+
+  autoshipDetail:
+    handler: src/services/autoship.autoshipDetail
+    events:
+      - http:
+          path: autoship/detail
+          method: get
+          cors: true
+
+  orderHistoryDetail:
+    handler: src/services/orderHistory.orderHistoryDetail
+    events:
+      - http:
+          path: orderHistory/detail
+          method: get
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

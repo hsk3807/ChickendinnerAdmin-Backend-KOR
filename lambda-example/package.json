@@ -1,0 +1,40 @@
+{
+  "name": "lambda-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy-debug": "cross-env SLS_DEBUG=* serverless deploy --verbose --stage dev",
+    "dev-deploy:exampleCreateOne": "serverless deploy function --function exampleCreateOne --verbose --stage dev",
+    "dev-deploy:exampleUpdateOne": "serverless deploy function --function exampleUpdateOne --verbose --stage dev",
+    "dev-deploy:exampleDeleteOne": "serverless deploy function --function exampleDeleteOne --verbose --stage dev",
+    "dev-deploy:exampleGetOne": "serverless deploy function --function exampleGetOne --verbose --stage dev",
+    "dev-deploy:exampleGetList": "serverless deploy function --function exampleGetList --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "dev-remove-debug": "cross-env SLS_DEBUG=* serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:exampleCreateOne": "serverless deploy function --function exampleCreateOne --verbose --stage prod",
+    "prod-deploy:exampleUpdateOne": "serverless deploy function --function exampleUpdateOne --verbose --stage prod",
+    "prod-deploy:exampleDeleteOne": "serverless deploy function --function exampleDeleteOne --verbose --stage prod",
+    "prod-deploy:exampleGetOne": "serverless deploy function --function exampleGetOne --verbose --stage prod",
+    "prod-deploy:exampleGetList": "serverless deploy function --function exampleGetList --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.845.0",
+    "cross-env": "^7.0.3",
+    "serverless-domain-manager": "^5.1.0"
+  },
+  "dependencies": {
+    "joi": "^17.4.0",
+    "lib-global-configs": "file:../lib/global-configs",
+    "lib-utils": "file:../lib/utils",
+    "mysql": "^2.18.1"
+  }
+}

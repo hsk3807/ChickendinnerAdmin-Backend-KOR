@@ -1,0 +1,58 @@
+{
+  "name": "lambda-unishop-dictionary-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:getDictionaryList": "serverless deploy function --function getDictionaryList --verbose --stage dev",
+    "dev-deploy:addDictionary": "serverless deploy function --function addDictionary --verbose --stage dev",
+    "dev-deploy:deleteDictionary": "serverless deploy function --function deleteDictionary --verbose --stage dev",
+    "dev-deploy:getListOfLanguages": "serverless deploy function --function getListOfLanguages --verbose --stage dev",
+    "dev-deploy:editDictionaryMultiple": "serverless deploy function --function editDictionaryMultiple --verbose --stage dev",
+    "dev-deploy:getPublishDictionary": "serverless deploy function --function getPublishDictionary --verbose --stage dev",
+    "dev-deploy:googleTranslate": "serverless deploy function --function googleTranslate --verbose --stage dev",
+    "dev-deploy:exportDictionaryList": "serverless deploy function --function exportDictionaryList --verbose --stage dev",
+    "dev-deploy:getHistoryOne": "serverless deploy function --function getHistoryOne --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:getDictionaryList": "serverless deploy function --function getDictionaryList --verbose --stage prod",
+    "prod-deploy:addDictionary": "serverless deploy function --function addDictionary --verbose --stage prod",
+    "prod-deploy:deleteDictionary": "serverless deploy function --function deleteDictionary --verbose --stage prod",
+    "prod-deploy:getListOfLanguages": "serverless deploy function --function getListOfLanguages --verbose --stage prod",
+    "prod-deploy:editDictionaryMultiple": "serverless deploy function --function editDictionaryMultiple --verbose --stage prod",
+    "prod-deploy:getPublishDictionary": "serverless deploy function --function getPublishDictionary --verbose --stage prod",
+    "prod-deploy:googleTranslate": "serverless deploy function --function googleTranslate --verbose --stage prod",
+    "prod-deploy:exportDictionaryList": "serverless deploy function --function exportDictionaryList --verbose --stage prod",
+    "prod-deploy:getHistoryOne": "serverless deploy function --function getHistoryOne --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-dictionary-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-unishop-dictionary-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-unishop-dictionary-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-api-compression": "^1.0.1",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "@google-cloud/translate": "^5.3.0",
+    "fast-deep-equal": "^2.0.1",
+    "joi": "^14.3.1",
+    "json2csv": "^5.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash.keyby": "^4.6.0",
+    "mysql": "^2.17.1",
+    "uuid": "^7.0.3"
+  }
+}

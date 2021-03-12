@@ -1,0 +1,40 @@
+module.exports.all = {
+    dashboard: { write: true },
+    products: { write: true },
+    users: { write: true },
+    enrollment: { write: true },
+    orders: { write: true },
+    announcements: { write: true },
+    news: { write: true },
+    notifications: { write: true },
+    tools: { write: true },
+    documents: { write: true },
+    miscellaneous: { write: true },
+    footer: { write: true },
+    banners: { write: true },
+    files: { write: true },
+    dictionary: { write: true },
+    home: { write: true },
+    blogPost: { write: true },
+    logonAs: { write: true },
+    settings: { write: true },
+    settingsData: { write: true },
+    coutrySelect: { write: true },
+    menulist: { write: true },
+    idVerification: { write: true },
+    popup: { write: true },
+    shareCart: { write: true },
+    pos: { write: true },
+    bannerV2: { write: true },
+    etlV2: { write: true },
+    resetPassword: { write: true },
+}
+module.exports.bennerOnly = {
+    banners: { write: true },
+    bannerV2: { write: true }
+}
+module.exports.bannerAndFooter = {
+    banners: { write: true },
+    bannerV2: { write: true },
+    footer: { write: true },
+}

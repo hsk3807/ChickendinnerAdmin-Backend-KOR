@@ -1,0 +1,248 @@
+
+service: unishop-product-api
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  dbConfigs:
+    dev:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr-dev"
+      user: "lambdaKrDev"
+      password: "FzTPpDeezTtFW2gS"
+    prod:
+      host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
+      dbName: "calls-kr"
+      user: "lambdaKr"
+      password: "rdStaC9s9rQ2HeHl"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: products
+    DB_HOST: ${self:custom.dbConfigs.${self:provider.stage}.host}
+    DB_DBNAME: ${self:custom.dbConfigs.${self:provider.stage}.dbName}
+    DB_USER: ${self:custom.dbConfigs.${self:provider.stage}.user}
+    DB_PASSWORD: ${self:custom.dbConfigs.${self:provider.stage}.password}
+
+  vpc:
+    securityGroupIds:
+      - sg-0eae031a176831694
+    subnetIds:
+      - subnet-0204937de4af72758
+functions:
+  getProductList:
+    handler: src/functions/getProductList.handler
+    events:
+      - http:
+          path: /data/{countryCode}
+          method: get
+          cors: true
+    timeout: 30
+  getProduct:
+    handler: src/functions/getProduct.handler
+    events:
+      - http:
+          path: /data/{countryCode}/{id}
+          method: get
+          cors: true
+  createProduct:
+    handler: src/functions/createProduct.handler
+    events:
+      - http:
+          path: /data/{countryCode}
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editProduct:
+    handler: src/functions/editProduct.handler
+    events:
+      - http:
+          path: /data/{countryCode}/{id}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  removeProduct:
+    handler: src/functions/removeProduct.handler
+    events:
+      - http:
+          path: /data/{countryCode}/{id}
+          method: delete
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getSchemaProduct:
+    handler: src/functions/getSchemaProduct.handler
+    events:
+      - http:
+          path: /schema/product/{countryCode}
+          method: get
+          cors: true
+  getWarehouseList:
+    handler: src/functions/getWarehouseList.handler
+    events:
+      - http:
+          path: /listData/warehouse
+          method: get
+          cors: true
+  getListWarehouseByCountry:
+    handler: src/functions/getListWarehouseByCountry.handler
+    events:
+      - http:
+          path: /list/warehouse/{countryCode}
+          method: get
+          cors: true
+  getListCategoriesByCountry:
+    handler: src/functions/getListCategoriesByCountry.handler
+    events:
+      - http:
+          path: /list/category/{countryCode}
+          method: get
+          cors: true
+  searchProducts:
+    handler: src/functions/searchProducts.handler
+    events:
+      - http:
+          path: /search/products/{countryCode}
+          method: get
+          cors: true
+  editHotProducts:
+    handler: src/functions/editHotProducts.handler
+    events:
+      - http:
+          path: /HotProducts/{countryCode}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editFeaturedProducts:
+    handler: src/functions/editFeaturedProducts.handler
+    events:
+      - http:
+          path: /FeaturedProducts/{countryCode}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editAllowBackorderProducts:
+    handler: src/functions/editAllowBackorderProducts.handler
+    events:
+      - http:
+          path: /AllowBackorderProducts/{countryCode}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editBufferQuantityProducts:
+    handler: src/functions/editBufferQuantityProducts.handler
+    events:
+      - http:
+          path: /BufferQuantityProducts/{countryCode}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editStatusProducts:
+    handler: src/functions/editStatusProducts.handler
+    events:
+      - http:
+          path: /StatusProducts/{countryCode}
+          method: patch
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getSortListCategories:
+    handler: src/functions/getSortListCategories.handler
+    events:
+      - http:
+          path: /sortList/categories/{countryCode}
+          method: get
+          cors: true
+  editSortListCategories:
+    handler: src/functions/editSortListCategories.handler
+    events:
+      - http:
+          path: /sortList/categories/{countryCode}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editSortListProducts:
+    handler: src/functions/editSortListProducts.handler
+    events:
+      - http:
+          path: /sortList/products/{countryCode}/{warehouse}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  removeMultipleProducts:
+    handler: src/functions/removeMultipleProducts.handler
+    events:
+      - http:
+          path: /removeMultiple/{countryCode}
+          method: DELETE
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getProductListByItemCode:
+    handler: src/functions/getProductListByItemCode.handler
+    events:
+      - http:
+          path: /listByItemCode/{countryCode}
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

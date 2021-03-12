@@ -1,0 +1,123 @@
+service: unishop-authorization
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  corsHydra:
+    origin: '*'
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - authorization-hydra
+    allowCredentials: false
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: authorization
+    SUPERUSER_USERNAME : superuser
+    SUPERUSER_PASSWORD : Rt_3d*bU$Zr!bRrf
+    USHOP_TOKEN : Thzvh2GLesQxs
+    DYNAMODB_TABLE_MAIN: unishop_authorization_${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MAIN}"
+
+functions:
+  userLogin:
+    handler: src/functions/userLogin.handler
+    events:
+      - http:
+          path: /login
+          method: post
+          cors: true
+
+  employeeLogin:
+    handler: src/functions/employeeLogin.handler
+    events:
+      - http:
+          path: /employeeLogin
+          method: post
+          cors: true
+
+  employeeRefresh:
+    handler: src/functions/employeeRefresh.handler
+    events:
+      - http:
+          path: /employeeRefresh
+          method: get
+          cors: ${self:custom.corsHydra}
+
+  getUserProfile:
+    handler: src/functions/getUserProfile.handler
+    events:
+      - http:
+          path: /user/userProfile
+          method: get
+          cors: true
+          authorizer:
+            name: verifyToken
+            resultTtlInSeconds: 0
+
+  editUserProfile:
+    handler: src/functions/editUserProfile.handler
+    events:
+      - http:
+          path: /user/userProfile
+          method: put
+          cors: true
+          authorizer:
+            name: verifyToken
+            resultTtlInSeconds: 0
+
+  verifyToken:
+    handler: src/functions/verifyToken.handler
+    cors: true
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

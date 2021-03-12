@@ -1,0 +1,176 @@
+
+service: unishop-files-api
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  verifyTokenArns:
+    dev: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-dev-verifyToken
+    prod: arn:aws:lambda:ap-northeast-2:153874506602:function:unishop-authorization-prod-verifyToken
+  useVerifyTokenArn: ${self:custom.verifyTokenArns.${self:provider.stage}}
+  domains:
+    dev: member-calls2-kr-dev.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: ${self:provider.environment.MODULE_KEY}
+  corsHydra:
+    origin: '*'
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - authorization-hydra
+    allowCredentials: false
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  endpointType: regional
+  apiName: unishop_${self:provider.environment.MODULE_KEY}_${self:provider.stage}
+  deploymentBucket: ushop-serverless-applications-kor
+  environment:
+    MODULE_KEY: files
+    DYNAMODB_TABLE_MAIN: unishop_files_${self:provider.stage}
+    S3_BUCKET_MAIN: public.ushop.unicity.com
+    S3_BUCKET_TEMP: temp.ushop.unicity.com
+    S3_PATH_DOWNLOAD_FILES: download_files_${self:provider.stage}
+    FILE_EXPIRE_MINUTES: 10
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MAIN}"
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+
+functions:
+  addDownloadFileFromTemp:
+    handler: src/functions/addDownloadFileFromTemp.handler
+    events:
+      - http:
+          path: /downloadFile/{countryCode}
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getDownloadFileList:
+    handler: src/functions/getDownloadFileList.handler
+    events:
+      - http:
+          path: /downloadFile/{countryCode}
+          method: get
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editDownloadFile:
+    handler: src/functions/editDownloadFile.handler
+    events:
+      - http:
+          path: /downloadFile/{countryCode}/{id}
+          method: PUT
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getDownloadFileUrl:
+    handler: src/functions/getDownloadFileUrl.handler
+    events:
+      - http:
+          path: /publicUrl/DownloadFile/{countryCode}/{id}
+          method: get
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  sortDownloadFilesById:
+    handler: src/functions/sortDownloadFilesById.handler
+    events:
+      - http:
+          path: /sort/DownloadFile/{countryCode}
+          method: put
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  deleteDownloadFileMultiple:
+    handler: src/functions/deleteDownloadFileMultiple.handler
+    events:
+      - http:
+          path: /multiple/DownloadFile/{countryCode}
+          method: DELETE
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  editDownloadFileEnableMultiple:
+    handler: src/functions/editDownloadFileEnableMultiple.handler
+    events:
+      - http:
+          path: /multiple/DownloadFileEnable/{countryCode}
+          method: PATCH
+          cors: true
+          authorizer:
+            arn: ${self:custom.useVerifyTokenArn}
+            resultTtlInSeconds: 0
+  getPublishFilesList:
+    handler: src/functions/getPublishFilesList.handler
+    events:
+      - http:
+          path: /publish/{countryCode}
+          method: get
+          cors: ${self:custom.corsHydra}
+  getPublishFileUrl:
+    handler: src/functions/getPublishFileUrl.handler
+    events:
+      - http:
+          path: /publish/{countryCode}/{id}
+          method: get
+          cors: ${self:custom.corsHydra}
+  getContainFiles:
+    handler: src/functions/getContainFiles.handler
+    events:
+      - http:
+          path: /containFiles
+          method: get
+          cors: ${self:custom.corsHydra}
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
+    GatewayResponseDefault5XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"

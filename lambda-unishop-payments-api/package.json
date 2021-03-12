@@ -1,0 +1,39 @@
+{
+  "name": "lambda-unishop-payments-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "__Comment_DEVELOP": "------------------------------------------ DEVELOP ------------------------------------------",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:getPaymentList": "serverless deploy function --function getPaymentList --verbose --stage dev",
+    "dev-deploy:getPaymentStatusList": "serverless deploy function --function getPaymentStatusList --verbose --stage dev",
+    "dev-remove": "serverless remove --verbose --stage dev",
+    "__Comment_PRODUCTION": "------------------------------------------ PRODUCTION ------------------------------------------",
+    "prod-deploy": "serverless deploy --verbose --stage prod",
+    "prod-deploy:getPaymentList": "serverless deploy function --function getPaymentList --verbose --stage prod",
+    "prod-deploy:getPaymentStatusList": "serverless deploy function --function getPaymentStatusList --verbose --stage prod",
+    "prod-remove": "serverless remove --verbose --stage prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://patchamet-unicity@github.com/patchamet-unicity/lambda-unishop-payments-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patchamet-unicity/lambda-unishop-payments-api/issues"
+  },
+  "homepage": "https://github.com/patchamet-unicity/lambda-unishop-payments-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^2.0.1",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1"
+  }
+}
