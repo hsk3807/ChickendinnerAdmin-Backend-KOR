@@ -20,7 +20,7 @@ custom:
   customDomain:
     domainName: ${self:custom.domains.${self:provider.stage}}
     stage: ${self:provider.stage}
-    basePath: ${self:provider.environment.MODULE_KEY}-v2${self:custom.extendPath.${self:provider.stage}, ''}
+    basePath: ${self:provider.environment.MODULE_KEY}-v2
   dbConfigs:
     dev:
       host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
@@ -105,9 +105,9 @@ functions:
           path: /data
           method: post
           cors: true
-          authorizer:
-            arn: ${self:custom.useVerifyTokenArn}
-            resultTtlInSeconds: 0
+          # authorizer:
+          #   arn: ${self:custom.useVerifyTokenArn}
+          #   resultTtlInSeconds: 0
 
   productEditMultiple:
     handler: src/controllers/productController.editMultiple
