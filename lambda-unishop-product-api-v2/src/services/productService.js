@@ -49,6 +49,18 @@ const columnsList = [
     `p.pv`,
     `p.image_url`,
     `p.remarks`,
+    `m.down_category_id`,
+    `m.category_id`,
+    `p.item_link`,
+    `p.delay_phrase`,
+    `p.is_pack`,
+    `p.is_new`,
+    `p.is_best`,
+    `p.is_delay_chk`,
+    `p.is_soldout`,
+    `p.item_desc`,
+    `p.max_order_cnt`,
+    `i.qty_available`,
 ]
 
 const queryDefault = [
@@ -76,6 +88,11 @@ const listOfColumnBool = [
     `is_renewal_sellable`,
     `is_starter_kit`,
     `is_starter_kit_sellable`,
+    `is_pack`,
+    `is_new`,
+    `is_best`,
+    `is_delay_chk`,
+    `is_soldout`
 ]
 const listOfColumnArray = [`only_status_list`]
 const listOfColumnJoin = [`list_of_category_id`, `list_of_tag_id`, `list_of_inventory_id`]
