@@ -263,7 +263,6 @@ const getList = async (e) => {
 const create = async (e) => {
   try {
     const body = parseBodyJSON(e.body);
-    return createResponse(httpStatus.ok, { data: body });
 
     const { error: errorValidateBody, value: validatedBody } = validateInput(
       body,

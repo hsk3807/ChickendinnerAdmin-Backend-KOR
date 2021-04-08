@@ -96,6 +96,7 @@ const listOfColumnBool = [
 ]
 const listOfColumnArray = [`only_status_list`]
 const listOfColumnJoin = [`list_of_category_id`, `list_of_tag_id`, `list_of_inventory_id`]
+const rowDelColumn = [`list_of_category_id`, `list_of_tag_id`, `list_of_inventory_id`, `down_category_id`, `category_id`]
 
 const toObj = rawData => Object
     .keys(rawData)
@@ -135,7 +136,7 @@ const toRaw = objData => Object
             obj = extractGroupArray(obj, key, objData)
         } else if ([`only_status_list`].includes(key)) {
             obj = { ...obj, [key]: toStringArray(objData[key]) }
-        } else if (listOfColumnJoin.includes(key)) {
+        } else if (rowDelColumn.includes(key)) {
             // do nothing
         } else {
             obj = { ...obj, [key]: objData[key] }
@@ -245,6 +246,7 @@ const create = async objData => {
             country_code,
             list_of_category_id = [],
             list_of_tag_id = [],
+            down_category_id
         } = objData
 
         const rowData = toRaw(objData)
@@ -255,7 +257,7 @@ const create = async objData => {
 
         const categoriesExcuteParams = list_of_category_id.length > 0
             ? list_of_category_id
-                .map(category_id => ({ country_code, product_id, category_id }))
+                .map(category_id => ({ country_code, product_id, category_id, down_category_id }))
                 .map(r => toCmdInsert('products_mapping_categories', r))
                 .reduce(combileExcuteParams, null)
             : null
