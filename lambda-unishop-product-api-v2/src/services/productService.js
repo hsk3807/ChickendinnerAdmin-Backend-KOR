@@ -320,10 +320,11 @@ const editMultiple = async editDataList => {
                 id: product_id,
                 country_code,
                 list_of_category_id = [],
+                down_category_id
             } = r
             return [
                 ...list,
-                ...list_of_category_id.map(category_id => ({ country_code, product_id, category_id }))
+                ...list_of_category_id.map(category_id => ({ country_code, product_id, category_id, down_category_id }))
             ]
         }, [])
         // add new tags  
