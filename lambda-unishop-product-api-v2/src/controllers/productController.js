@@ -120,6 +120,10 @@ const toPublishData = (r, { status, tagBackOrder, tagOutOfStock }) => {
     price_original,
     discount_amount,
     pv: displayPVStatuses[status] ? r.pv : null,
+    is_best: r.is_best,
+    is_new: r.is_new,
+    max_order_cnt: r.max_order_cnt,
+    item_link: r.item_link,
     qty_sellable: r.is_allow_backorder ? 99 : qty_sellable,
     image_url: r.image_url,
     remarks: r.remarks,
@@ -127,6 +131,11 @@ const toPublishData = (r, { status, tagBackOrder, tagOutOfStock }) => {
     tags: r.tags,
     status: productStatus,
     system_tags,
+    down_category_id: r.down_category_id,
+    category_id: r.category_id,
+    delay_phrase: r.delay_phrase,
+    is_delay_chk: r.is_delay_chk,
+    qty: r.qty
   };
 };
 
@@ -540,6 +549,8 @@ const getPublish = async (e) => {
 
     const productWithChildren = mapWarehouseProducts
       .filter(({ is_enable }) => (onlyEnableValid ? is_enable : true))
+      .filter(({ is_soldout }) => (is_soldout ? !is_soldout : true))
+      .filter(({ qty }) => (qty.available > 0 ? true : false))
       .filter(({ only_status_list = [] }) =>
         only_status_list.length > 0
           ? only_status_list.includes(statusValid)
