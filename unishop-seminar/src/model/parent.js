@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const AWS = require('aws-sdk');
 
-const DB = new AWS.DynamoDB.DocumentClient({region: 'ap-southeast-1'});
+const DB = new AWS.DynamoDB.DocumentClient({region: 'ap-northeast-2'});
 
 module.exports = function(event, context, table) {
     const TABLE = table

@@ -2,7 +2,7 @@
 
 module.exports.getDynamoDBConnection = () => {
     const AWS = require('aws-sdk');
-    return new AWS.DynamoDB.DocumentClient({region: 'ap-southeast-1'});
+    return new AWS.DynamoDB.DocumentClient({region: 'ap-northeast-2'});
 };
 
 module.exports.getMysqlDBConnection = () => {

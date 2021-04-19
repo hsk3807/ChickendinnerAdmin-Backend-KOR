@@ -6,7 +6,7 @@ provider:
   timeout: 29
   versionFunctions: 1.0
   stage: ${opt:stage, 'dev'}
-  region: ap-southeast-1
+  region: ap-northeast-2
   deploymentBucket: ushop-serverless-applications
   endpointType: regional
   custom_var:

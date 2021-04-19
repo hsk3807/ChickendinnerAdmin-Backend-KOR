@@ -24,7 +24,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   stage: dev
-  region: ap-southeast-1
+  region: ap-northeast-2
   environment:
     DYNAMODB_TABLE_MAIN: payments-scb-confirms-uat
 

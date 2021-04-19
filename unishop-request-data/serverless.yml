@@ -4,7 +4,7 @@ provider:
   runtime: nodejs12.x
   timeout: 180
   stage: ${opt:stage, 'dev'}
-  region: ap-southeast-1
+  region: ap-northeast-2
   deploymentBucket: ushop-serverless-applications
   environment:
     STAGE: ${self:provider.stage}
