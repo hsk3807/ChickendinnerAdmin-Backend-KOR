@@ -1,0 +1,60 @@
+service: unishop-request-payment-data
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 180
+  stage: ${opt:stage, 'dev'}
+  region: ap-southeast-1
+  deploymentBucket: ushop-serverless-applications
+  environment:
+    STAGE: ${self:provider.stage}
+    BASEPATH: ${self:custom.customDomain.basePath}
+    MYSQL_DB_HOST: ${self:custom.mysql.${self:provider.stage}_db_host}
+    MYSQL_DB_USER: ${self:custom.mysql.${self:provider.stage}_db_user}
+    MYSQL_DB_PWD: ${self:custom.mysql.${self:provider.stage}_db_pwd}
+    MYSQL_DB_NAME: ${self:custom.mysql.${self:provider.stage}_db_name}
+    MYSQL_DB_PORT: ${self:custom.mysql.${self:provider.stage}_db_port}
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
+functions:
+  app:
+    handler: src/index.main
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+
+custom:
+  mysql:
+    prod_db_host: '52.220.233.225'
+    prod_db_port: '3306'
+    prod_db_user: 'ushop'
+    prod_db_pwd: '4MP8b#WCGF'
+    prod_db_name: 'calls'
+    # ===========================
+    dev_db_host: '52.220.233.225'
+    dev_db_port: '3306'
+    dev_db_user: 'ushop'
+    dev_db_pwd: '4MP8b#WCGF'
+    dev_db_name: 'unishop_dev'
+    # ===========================
+    local_db_host: 'localhost'
+    local_db_port: '8889'
+    local_db_user: 'root'
+    local_db_pwd: 'root'
+    local_db_name: 'calls'
+  domains:
+    local: member-calls2-dev-kr.unicity.com
+    dev: member-calls2-dev-kr.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: request-payment-data
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-express

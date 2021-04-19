@@ -231,7 +231,7 @@ const getSuccessTracker = async ({ customerHref, tokenHydra, params }) => {
 }
 
 const getSeminar = async ({ baId, params }) => {
-    const url = `https://member-calls2.unicity.com/unishop-fn-misc/seminar/v2/get/${baId}${convertToQueryString(params)}`
+    const url = `https://member-calls2-kr.unicity.com/unishop-fn-misc/seminar/v2/get/${baId}${convertToQueryString(params)}`
 
     console.time(url)
     const { data } = await axios({

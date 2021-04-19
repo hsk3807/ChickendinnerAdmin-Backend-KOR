@@ -1,0 +1,102 @@
+service: unishop-seminar
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 180
+  versionFunctions: 1.0
+  stage: ${opt:stage, 'dev'}
+  region: ap-southeast-1
+  endpointType: regional  
+  deploymentBucket: ushop-serverless-applications
+
+  custom_var:
+    dynamodb:
+      prod_table:
+        main: unishop_seminar
+        country_code: unishop_seminar_country_code
+      dev_table:
+        main: unishop_seminar_dev
+        country_code: unishop_seminar_country_code_dev     
+      local_table:
+        main: unishop_seminar_dev
+        country_code: unishop_seminar_country_code_dev
+  environment:
+    BUCKET: unishop-seminar
+    TOKEN: 'tVxbmKcjme'
+    DYNAMO_DB_MAIN_RESOURCE: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.custom_var.dynamodb.${self:provider.stage}_table.main}
+    DYNAMO_DB_COUNTRY_CODE_RESOURCE: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.custom_var.dynamodb.${self:provider.stage}_table.country_code}
+    DYNAMO_DB_MAIN_TABLE: ${self:provider.custom_var.dynamodb.${self:provider.stage}_table.main}
+    DYNAMO_DB_COUNTRY_CODE_TABLE: ${self:provider.custom_var.dynamodb.${self:provider.stage}_table.country_code}
+    STAGE: ${self:provider.stage}
+
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"    
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:HeadObject
+        - s3:GetObject
+        - s3:PutObject
+      Resource: 'arn:aws:s3:::unishop-seminar/*'    
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem        
+        - dynamodb:BatchWriteItem
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:DescribeStream
+        - dynamodb:ListStreams
+      Resource: ${self:provider.environment.DYNAMO_DB_MAIN_RESOURCE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem        
+        - dynamodb:BatchWriteItem
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:DescribeStream
+        - dynamodb:ListStreams
+      Resource: ${self:provider.environment.DYNAMO_DB_COUNTRY_CODE_RESOURCE}      
+
+functions:
+  index:
+    handler: src/handler/get.main
+    events:
+      - http:
+          path: /get/{baId}
+          method: get
+          cors: true
+  import:
+    handler: src/handler/import.main
+    events:
+      - http:
+          path: /import
+          method: get
+          cors: true
+
+custom:
+  domains:
+    local: member-calls2-dev-kr.unicity.com
+    dev: member-calls2-dev-kr.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: seminar
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager

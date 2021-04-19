@@ -1,0 +1,28 @@
+{
+  "name": "unishop-qronline",
+  "version": "1.0.1",
+  "description": "",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "crc": "^3.8.0",
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.20",
+    "mysql2": "^2.1.0",
+    "qrcode": "^1.4.4"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.739.0",
+    "serverless-domain-manager": "^3.3.1",
+    "serverless-offline": "^5.12.0"
+  },
+  "scripts": {
+    "start": "sls offline --port 3210 --stage local",
+    "deploy-dev": "sls deploy --verbose --stage dev",
+    "deploy-dev:scb-trigger": "sls deploy function --function scb-trigger --verbose --stage dev",
+    "deploy-prod": "SLS_DEBUG=* sls deploy --verbose --stage prod",
+    "deploy-prod:scb-trigger": "sls deploy function --function scb-trigger --verbose --stage prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

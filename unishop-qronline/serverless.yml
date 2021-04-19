@@ -1,0 +1,118 @@
+service: unishop-qronline
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 29
+  versionFunctions: 1.0
+  stage: ${opt:stage, 'dev'}
+  region: ap-southeast-1
+  deploymentBucket: ushop-serverless-applications
+  endpointType: regional
+  custom_var:
+    mysql:
+      prod_db_host: '52.220.233.225'
+      prod_db_port: '3306'
+      prod_db_user: 'ushop'
+      prod_db_pwd: '4MP8b#WCGF'
+      prod_db_name: 'calls'
+      # ===========================
+      dev_db_host: '52.220.233.225'
+      dev_db_port: '3306'
+      dev_db_user: 'ushop'
+      dev_db_pwd: '4MP8b#WCGF'
+      dev_db_name: 'unishop_dev'
+      # ===========================
+      local_db_host: 'localhost'
+      local_db_port: '8889'
+      local_db_user: 'root'
+      local_db_pwd: 'root'
+      local_db_name: 'calls'
+    dynamodb:
+      prod_table: payments-scb-confirms-uat
+      dev_table: payments-scb-confirms-dev
+      local_table: payments-scb-confirms-dev
+      prod_stream: "arn:aws:dynamodb:ap-southeast-1:153874506602:table/payments-scb-confirms-uat/stream/2019-11-28T04:29:05.882"
+      dev_stream: "arn:aws:dynamodb:ap-southeast-1:153874506602:table/payments-scb-confirms-dev/stream/2020-01-09T11:04:58.125"
+      local_stream: "arn:aws:dynamodb:ap-southeast-1:153874506602:table/payments-scb-confirms-dev/stream/2020-01-09T11:04:58.125"
+
+  environment:
+    HYDRA_VERSION: 'v5a'
+    MYSQL_DB_HOST: ${self:provider.custom_var.mysql.${self:provider.stage}_db_host}
+    MYSQL_DB_USER: ${self:provider.custom_var.mysql.${self:provider.stage}_db_user}
+    MYSQL_DB_PWD: ${self:provider.custom_var.mysql.${self:provider.stage}_db_pwd}
+    MYSQL_DB_NAME: ${self:provider.custom_var.mysql.${self:provider.stage}_db_name}
+    MYSQL_DB_PORT: ${self:provider.custom_var.mysql.${self:provider.stage}_db_port}
+    DYNAMO_DB_RESOURCE: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.custom_var.dynamodb.${self:provider.stage}_table}"
+    DYNAMO_DB_STREAM: ${self:provider.custom_var.dynamodb.${self:provider.stage}_stream}
+    STAGE: ${self:provider.stage}
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:DescribeStream
+        - dynamodb:ListStreams
+      Resource: ${self:provider.environment.DYNAMO_DB_RESOURCE}
+
+functions:
+  info:
+    handler: src/handlers/info.main
+    events:
+      - http:
+          path: /info
+          method: get
+          cors: true
+  insert-scb-transaction:
+    handler: src/handlers/insert_transaction.main
+    events:
+      - http:
+          path: /scb
+          method: post
+          cors: true
+  create-order:
+    handler: src/handlers/create_order.main
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+  get-qrcode:
+    handler: src/handlers/get_qrcode.main
+    events:
+      - http:
+          path: /qrdata
+          method: get
+          cors: true
+  get-qrcode-test:
+    handler: src/handlers/get_qrcode_test.main
+    events:
+      - http:
+          path: /qrdata_test
+          method: get
+          cors: true
+  scb-trigger:
+    handler: src/handlers/scb_trigger.main
+    events:
+      - stream: ${self:provider.environment.DYNAMO_DB_STREAM}
+
+custom:
+  domains:
+    dev: member-calls2-dev-kr.unicity.com
+    prod: member-calls2-kr.unicity.com
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    basePath: qronline
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
