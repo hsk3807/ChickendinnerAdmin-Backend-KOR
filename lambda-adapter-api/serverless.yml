@@ -100,9 +100,9 @@ provider:
     FUNC_NAME_POPUP_PUBLISH_POPUP: ${self:custom.funcNamePopup.${self:provider.stage}}
   vpc:
     securityGroupIds:
-      - sg-0eae031a176831694
+      - sg-aff458c7
     subnetIds:
-      - subnet-0204937de4af72758
+      - subnet-08e72028bdb44048f
   iamRoleStatements:
     - Effect: "Allow"
       Action:

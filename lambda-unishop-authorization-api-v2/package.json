@@ -1,0 +1,29 @@
+{
+  "name": "lambda-unishop-authorization-api-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:loadUserSocial": "serverless deploy function --function loadUserSocial --verbose --stage dev",
+    "dev-deploy:socialLogin": "serverless deploy function --function socialLogin --verbose --stage dev",
+    "dev-deploy:createUserSocial": "serverless deploy function --function createUserSocial --verbose --stage dev",
+    "dev-deploy:deleteUserSocial": "serverless deploy function --function deleteUserSocial --verbose --stage dev",
+    "dev-deploy:updateUserSocial": "serverless deploy function --function updateUserSocial --verbose --stage dev",
+    "prod-deploy": "serverless deploy --verbose --stage prod"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.477.0",
+    "serverless-domain-manager": "^3.3.0"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^2.0.1",
+    "joi": "^14.3.1",
+    "js-base64": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1"
+  }
+}

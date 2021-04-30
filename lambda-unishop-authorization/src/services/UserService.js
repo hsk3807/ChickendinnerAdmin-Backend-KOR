@@ -97,7 +97,7 @@ module.exports.createDefaultProfile = async (username, newUserProfile) => {
         PARTITIONS.USER_PROFILES,
         username,
         newUserProfile
-    )
+    )``
     return newUserProfile
 
 }
