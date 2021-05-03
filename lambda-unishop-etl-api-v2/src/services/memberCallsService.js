@@ -33,7 +33,7 @@ const getLsb = async ({ baId }) => {
 const getSeminar = async ({ baId, ushopCountryCode }) => {
     try{
         const queryStrings = convertToQueryString({ country_code: ushopCountryCode })
-        const url = `https://member-calls2.unicity.com/unishop-fn-misc/seminar/v2/get/${baId}${queryStrings}`
+        const url = `https://member-calls2-kr.unicity.com/unishop-fn-misc/seminar/v2/get/${baId}${queryStrings}`
         
         console.time(url)
         const { data } = await axios({

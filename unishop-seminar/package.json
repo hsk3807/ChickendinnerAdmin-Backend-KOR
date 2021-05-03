@@ -1,0 +1,27 @@
+{
+  "name": "unishop-seminar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/handler/get.js",
+  "scripts": {
+    "start": "sls offline --port 3210 --noTimeout --stage local",
+    "deploy-dev": "sls deploy --verbose --stage dev",
+    "deploy-prod": "SLS_DEBUG=* sls deploy --verbose --stage prod",
+    "deploy-prod:get": "sls deploy function --function index --verbose --stage prod",
+    "deploy-prod:import": "sls deploy function --function import --verbose --stage prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.27",
+    "xlsx": "^0.15.3"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.594.0",
+    "serverless-domain-manager": "^3.3.1",
+    "serverless-offline": "^5.12.1"
+  }
+}

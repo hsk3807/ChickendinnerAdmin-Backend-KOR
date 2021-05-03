@@ -23,8 +23,8 @@ custom:
     dev: https://hydra.unicity.net/v5a
     prod: https://hydra.unicity.net/v5a
   memberCalls2Urls:
-    dev: https://member-calls2-dev.unicity.com
-    prod: https://member-calls2.unicity.com
+    dev: https://member-calls2-dev-kr.unicity.com
+    prod: https://member-calls2-kr.unicity.com
   corsBackend:
     origin: '*'
     headers:
