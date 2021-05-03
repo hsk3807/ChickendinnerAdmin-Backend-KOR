@@ -8,6 +8,14 @@
 
   <script>
 
+  var failed_url = "/checkout/payment-response/failed";
+	var success_url = "/checkout/payment-response/success";
+
+  function init(){
+    var reUrl =  '<%- reUrl %>';
+    window.location.href = reUrl + success_url;
+  }
+  init();
   </script>
 
   <body>

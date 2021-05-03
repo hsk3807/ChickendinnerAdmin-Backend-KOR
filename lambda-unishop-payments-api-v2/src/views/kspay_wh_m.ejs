@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+<title>웹호스트방식 결제샘플</title>
+<style type="text/css">
+	BODY{font-size:9pt; line-height:100%}
+	TD{font-size:9pt; line-height:100%}
+	A {color:blue;line-height:100%; background-color:#E0EFFE}
+	INPUT{font-size:9pt;}
+	SELECT{font-size:9pt;}
+</style>
+</head>
+<script language="javascript">
+	function _pay(_frm)
+	{
+		// sndReply는 kspay_wh_rcv.jsp (결제승인 후 결과값들을 본창의 KSPayWeb Form에 넘겨주는 페이지)의 절대경로를 넣어줍니다.
+ 		_frm.sndReply.value           = getLocalUrl("kspay_wh_result") ;
+
+		var agent = navigator.userAgent;
+		var midx		= agent.indexOf("MSIE");
+		var out_size	= (midx != -1 && agent.charAt(midx+5) < '7');
+
+		//_frm.target = '_blank';
+		_frm.action ='https://kspay.ksnet.to/store/KSPayMobileV1.4/KSPayPWeb.jsp';
+		_frm.submit();
+    }
+
+	function getLocalUrl(mypage)
+	{
+		var myloc = location.href;
+		return myloc.substring(0, myloc.lastIndexOf('/')) + '/' + mypage;
+	}
+
+
+function init (){
+	try{
+		const formPay = document.getElementsByName("KSPayWeb")[0];
+		_pay(formPay);
+	}catch(err){
+
+	}
+
+}
+
+setTimeout(() => {
+	init();
+
+}, 300);
+</script>
+<body>
+<!-----------------------------------------<Part 1. KSPayWeb Form: 결과페이지주소 설정 > ---------------------------------------->
+<!--결제 완료후 결과값을 받아처리할 결과페이지의 주소-->
+	<form name=KSPayWeb method=post>
+<input type=hidden name=sndMobile value="<%= sndMobile %>">
+<input type=hidden name=sndEmail value="<%= sndEmail %>">
+<input type=hidden name=sndOrdername value="<%= sndOrdername %>">
+<input type=hidden name=sndAmount value="<%= sndAmount %>">
+<input type=hidden name=sndGoodname value="<%= sndGoodname %>">
+<input type=hidden name=sndShowcard value="C(<%= selectedCard %>)">
+<input type=hidden name=sndInteresttype value="NONE">
+<input type=hidden name=sndInstallmenttype value="0:2:3:4:5:6:7:8:9:10:11:12">
+<input type=hidden name=sndAllregid value="">
+<input type=hidden name=sndOrdernumber value="carrot_1234">
+<input type=hidden name=sndCurrencytype value="WON">
+<input type=hidden name=sndStoreid value="<%= sndStoreid %>">
+<input type=hidden name=sndPaymethod  value="<%= sndPaymethod %>">
+
+<input type=hidden name=sndCharSet value="utf-8">									<!-- 가맹점 문자열 체어셋 -->
+	<input type=hidden name=sndReply           		  value="">
+	<input type=hidden name=sndEscrow          	    value="0">                           <!--에스크로적용여부-- 0: 적용안함, 1: 적용함 -->
+	<input type=hidden name=sndVirExpDt     		    value="">                            <!-- 마감일시 -->
+	<input type=hidden name=sndVirExpTm     		    value="">                            <!-- 마감시간 -->
+	<input type=hidden name=sndStoreName       	    value="케이에스페이(주)">                  <!--회사명을 한글로 넣어주세요(최대20byte)-->
+	<input type=hidden name=sndStoreNameEng    	    value="kspay">                       <!--회사명을 영어로 넣어주세요(최대20byte)-->
+	<input type=hidden name=sndStoreDomain     	    value="http://www.kspay_test.co.kr"> <!-- 회사 도메인을 http://를 포함해서 넣어주세요-->
+	<input type=hidden name=sndGoodType		   		    value="1">								           <!--실물(1) / 디지털(2) -->
+	<input type=hidden name=sndUseBonusPoint		    value="">   							           <!-- 포인트거래시 60 -->
+	<input type=hidden name=sndRtApp		   	        value="">									           <!-- 하이브리드APP 형태로 개발시 사용하는 변수 -->
+	<input type=hidden name=sndStoreCeoName         value="">                            <!--  카카오페이용 상점대표자명 -->
+	<input type=hidden name=sndStorePhoneNo         value="">                            <!--  카카오페이 연락처 -->
+	<input type=hidden name=sndStoreAddress         value="">                            <!--  카카오페이 주소 -->
+
+	<input type=hidden name=ECHA        value="<%= referenceId %>">
+	<input type=hidden name=ECHB        value="<%= reUrl %>">
+</form>
+</body>
+</html>

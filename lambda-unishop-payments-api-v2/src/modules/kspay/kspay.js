@@ -1,16 +1,6 @@
-<html>
-<head>
-<meta http-equiv="Cache-Control" content="no-cache">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>*** KSNET WebHost Sample V1.4 [JSP] ***</title>
-<link href="./css/pgstyle.css" rel="stylesheet" type="text/css" charset="utf-8">
-</head>
-<!-- <script language="javascript" src="https://kspay.ksnet.to/store/KSPayWebV1.4/js/kspay_web.js"></script> -->
-<script>
-
 var _KSPAY_DOMAIN = 'https://kspay.ksnet.to/'
 var _KSPAY_URL = 'https://kspay.ksnet.to/store/KSPayWebV1.4/KSPayPWeb.jsp'
+// var _KSPAY_URL = 'http://localhost:3000/checkout/response/test'
 var _KSPAY_WIN_NAME = '_KSPAY_WIN'
 
 var _kspay_pop_obj
@@ -26,13 +16,8 @@ var _kspay_frm
 var closeIframe
 
 var submitI = function (formid, ifrmName, iWinX, iWinY) {
-	let objP = document.getElementById('popup');
-	let objO = document.getElementById('overlay');
-
-	console.log('objP : ', objP);
-	console.log('objO : ', objO);
     if (formid.target != ifrmName) {
-        if (objP == null) {
+        if (document.getElementById('popup') == null) {
             //var installpop = "<iframe id=\"payment-frame\" name=\"payment-frame\" width=\"820\" height=\"70\" scrolling=\"no\" frameborder=\"0\" allowtransparency=\"true\"></iframe>";
             var installpop = ''
             installpop +=
@@ -55,16 +40,19 @@ var submitI = function (formid, ifrmName, iWinX, iWinY) {
             newDiv = document.createElement('span')
             newDiv.innerHTML = installpop
             attachElement.appendChild(newDiv)
-
-						objP = document.getElementById('popup');
-						objO = document.getElementById('overlay');
         }
     }
-		objP.style.display = 'block';
-		objO.style.display = 'block';
+    $('#popup').html(
+        '<iframe id="payment-frame" name="payment-frame" src="" width="' +
+            iWinX +
+            '" height="' +
+            iWinY +
+            '" scrolling="no" frameborder="0" allowtransparency="true" style="background: #FFFFFF; border-radius:20px;"></iframe>'
+    )
+    $('#overlay, #popup').show()
 
     formid.method = 'get'
-    // formid.target = 'payment-frame'
+    formid.target = 'payment-frame'
     var _call_url = _KSPAY_URL
     _call_url = _call_url
     formid.action = _call_url
@@ -159,7 +147,6 @@ function _pay(_frm) {
     } else {
         popupFlag = false
     }
-
     if (!popupFlag) {
         submitI(_frm, _KSPAY_WIN_NAME, iWinX, iWinY)
     } else {
@@ -233,15 +220,8 @@ function _pay(_frm) {
 }
 function closePayment() {
     try {
-			let objP = document.getElementById('popup');
-			let objO = document.getElementById('overlay');
-			let objPayment = document.getElementById('payment-frame');
-
-			objP.style.display = 'none';
-		objO.style.display = 'none';
-			objPayment.remove();
-        // $('#overlay,#popup').hide()
-        // $('#payment-frame').remove()
+        $('#overlay,#popup').hide()
+        $('#payment-frame').remove()
     } catch (e) {}
 }
 function closeEvent() {
@@ -320,12 +300,7 @@ function _KSP_CHECK_CHILD() {
 }
 
 const paySuccess = () => {
-	let objP = document.getElementById('popup');
-	let objO = document.getElementById('overlay');
-			objP.style.display = 'none';
-		objO.style.display = 'none';
-    //$('#overlay, #popup').hide()
-
+    $('#overlay, #popup').hide()
 
     setTimeout(() => {
         window.location.href = '/checkout/payment-response/success'
@@ -333,126 +308,13 @@ const paySuccess = () => {
 }
 
 const payFailed = () => {
-  let objP = document.getElementById('popup');
-	let objO = document.getElementById('overlay');
-			objP.style.display = 'none';
-		objO.style.display = 'none';
-	// $('#overlay, #popup').hide()
+    $('#overlay, #popup').hide()
 
     setTimeout(() => {
         window.location.href = '/checkout/payment-response/failed'
     }, 300)
 }
-	</script>
-<script language="javascript">
 
-	function _submit(_frm)
-	{
-        const referenceId = "<%= referenceId %>";
-		_frm.sndReply.value = getLocalUrl("kspay_wh_rcv?referenceId="+ referenceId) ;
-		setTimeout(() => {
-		_pay(_frm);
-		}, 300);
-	}
-	function getLocalUrl(mypage)
-	{
-		var myloc = location.href;
-		return myloc.substring(0, myloc.lastIndexOf('/')) + '/' + mypage;
-	}
-	// goResult() - 함수설명 : 결재완료후 결과값을 지정된 결과페이지(kspay_wh_result.jsp)로 전송합니다.
-	function goResult(){
-		document.KSPayWeb.target = "";
-		document.KSPayWeb.action = "./kspay_wh_result.jsp";
-		document.KSPayWeb.submit();
-	}
-	// eparamSet() - 함수설명 : 결재완료후 (kspay_wh_rcv.jsp로부터)결과값을 받아 지정된 결과페이지(kspay_wh_result.jsp)로 전송될 form에 세팅합니다.
-	function eparamSet(rcid, rctype, rhash){
-		document.KSPayWeb.reWHCid.value 	= rcid;
-		document.KSPayWeb.reWHCtype.value = rctype  ;
-		document.KSPayWeb.reWHHash.value 	= rhash  ;
-	}
-	function mcancel()
-	{
-		// 취소
-		closeEvent();
-	}
-
-	setTimeout(() => {
-		_submit(document.KSPayWeb);
-	}, 500);
-</script>
-<body>
-<!-----------------------------------------<Part 1. KSPayWeb Form: 결과페이지주소 설정 > ---------------------------------------->
-<!--결제 완료후 결과값을 받아처리할 결과페이지의 주소-->
-<form name=KSPayWeb method=post>
-    <input type=hidden	name=sndStoreid value='<%= sndStoreid %>'>
-    <input type=hidden	name=sndOrdernumber value='carrot_1234'>
-    <input type=hidden	name=sndGoodname value='<%= sndGoodname %>'>
-    <input type=hidden	name=sndAmount value='<%= sndAmount %>'>
-    <input type=hidden	name=sndOrdername value='<%= sndOrdername %>'>
-    <input type=hidden	name=sndEmail value='<%= sndEmail %>'>
-    <input type=hidden	name=sndMobile value='<%= sndMobile %>'>
-
-        <input type=hidden name=sndPaymethod  value="<%= sndPaymethod %>">
-
-<!----------------------------------------------- <Part 2. 추가설정항목(메뉴얼참조)>  ----------------------------------------------->
-
-	<!-- 0. 공통 환경설정 -->
-	<input type=hidden	name=sndReply value="">
-	<input type=hidden  name=sndGoodType value="1"> 	 <!-- 상품유형: 실물(1),디지털(2) -->
-	<input type=hidden  name=sndCharSet value="utf-8"> <!-- 가맹점 charset 설정변수 (euc-kr / utf-8) -->
-
-	<!-- 1. 신용카드 관련설정 -->
-
-	<!-- 신용카드 결제방법  -->
-	<!-- 일반적인 업체의 경우 ISP,안심결제만 사용하면 되며 다른 결제방법 추가시에는 사전에 협의이후 적용바랍니다 -->
-	<input type=hidden  name=sndShowcard value="C(<%= selectedCard %>)">
-
-	<!-- 신용카드(해외카드) 통화코드: 해외카드결제시 달러결제를 사용할경우 변경 -->
-	<input type=hidden	name=sndCurrencytype value="WON"> <!-- 원화(WON), 달러(USD) -->
-
-	<!-- 할부개월수 선택범위 -->
-	<!--상점에서 적용할 할부개월수를 세팅합니다. 여기서 세팅하신 값은 결제창에서 고객이 스크롤하여 선택하게 됩니다 -->
-	<!--아래의 예의경우 고객은 0~12개월의 할부거래를 선택할수있게 됩니다. -->
-	<input type=hidden	name=sndInstallmenttype value="ALL(0:2:3:4:5:6:7:8:9:10:11:12)">
-
-	<!-- 가맹점부담 무이자할부설정 -->
-	<!-- 카드사 무이자행사만 이용하실경우  또는 무이자 할부를 적용하지 않는 업체는  "NONE"로 세팅  -->
-	<!-- 예 : 전체카드사 및 전체 할부에대해서 무이자 적용할 때는 value="ALL" / 무이자 미적용할 때는 value="NONE" -->
-	<!-- 예 : 전체카드사 3,4,5,6개월 무이자 적용할 때는 value="ALL(3:4:5:6)" -->
-	<!-- 예 : 삼성카드(카드사코드:04) 2,3개월 무이자 적용할 때는 value="04(3:4:5:6)"-->
-	<!-- <input type=hidden	name=sndInteresttype value="10(02:03),05(06)"> -->
-	<input type=hidden	name=sndInteresttype value="NONE">
-
-	<!-- 카카오페이 사용시 필수 세팅 값 -->
-	<input type=hidden name=sndStoreCeoName         value="">  <!--  카카오페이용 상점대표자명 -->
-	<input type=hidden name=sndStorePhoneNo         value="">  <!--  카카오페이 연락처 -->
-	<input type=hidden name=sndStoreAddress         value="">  <!--  카카오페이 주소 -->
-
-	<!-- 2. 온라인입금(가상계좌) 관련설정 -->
-	<input type=hidden	name=sndEscrow value="0"> 			        <!-- 에스크로사용여부 (0:사용안함, 1:사용) -->
-
-	<!-- 3. 계좌이체 현금영수증발급여부 설정 -->
-	<input type=hidden  name=sndCashReceipt value="0">          <!--계좌이체시 현금영수증 발급여부 (0: 발급안함, 1:발급) -->
-
-<!----------------------------------------------- <Part 3. 승인응답 결과데이터>  ----------------------------------------------->
-<!-- 결과데이타: 승인이후 자동으로 채워집니다. (*변수명을 변경하지 마세요) -->
-
-	<input type=hidden name=reWHCid 	value="">
-	<input type=hidden name=reWHCtype 	value="">
-	<input type=hidden name=reWHHash 	value="">
-
-<!--------------------------------------------------------------------------------------------------------------------------->
-
-<!--업체에서 추가하고자하는 임의의 파라미터를 입력하면 됩니다.-->
-<!--이 파라메터들은 지정된결과 페이지(kspay_result.jsp)로 전송됩니다.-->
-<input type=hidden name=ECHA        value="<%= referenceId %>">
-<input type=hidden name=ECHB        value="<%= reUrl %>">
-	<input type=hidden name=a        value="<%= referenceId %>">
-	<input type=hidden name=b        value="<%= reUrl %>">
-	<input type=hidden name=c        value="c1">
-	<input type=hidden name=d        value="d1">
-<!--------------------------------------------------------------------------------------------------------------------------->
-</form>
-</body>
-</html>
+global._pay = _pay
+global.paySuccess = paySuccess
+global.payFailed = payFailed

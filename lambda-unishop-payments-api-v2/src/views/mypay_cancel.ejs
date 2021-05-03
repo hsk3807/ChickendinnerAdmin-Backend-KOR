@@ -1,0 +1,29 @@
+<!-- views/mypay_cancle.ejs -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>mypay result</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+
+  <body>
+  </body>
+
+  <script>
+    var cancle_url = "/checkout/summary";
+      var failed_url = "/checkout/payment-response/failed";
+      var success_url = "/checkout/payment-response/success";
+  function init(){
+		var reUrl = '';
+    if(window.location.hostname === 'localhost') reUrl = "http://localhost:3000";
+    else reUrl = "https://ushop-kr.unicity.com";
+
+		reUrl = reUrl + cancle_url;
+    // parent.window.location.href = reUrl;
+    window.close();
+  }
+  init();
+  </script>
+</html>

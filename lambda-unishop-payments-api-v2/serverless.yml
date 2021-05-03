@@ -2,6 +2,8 @@ service: lambda-payment-test
 
 plugins:
   - serverless-domain-manager
+  - serverless-apigw-binary
+  - serverless-offline
 
 custom:
   dbConfigs:

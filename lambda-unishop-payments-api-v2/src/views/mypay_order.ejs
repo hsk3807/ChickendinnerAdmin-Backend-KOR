@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+<title>MYPAY</title>
+<style type="text/css">
+	BODY{font-size:6pt; line-height:160%}
+	TD{font-size:6pt; line-height:160%}
+	INPUT{font-size:6pt;}
+</style>
+</head>
+
+<body>
+<form name="payfrm" method="post" target="_self">
+<input type="hidden" name="sndMsalt"       value="<%= sndMsalt %>">
+<input type="hidden" name="sndMpayMsalt"   value="<%= sndMpayMsalt %>">
+<input type="hidden" name="sndEdata"       value="">
+<input type="hidden" name="sndEtoken"      value="">
+
+<input type=hidden name=sndOrdernumber value="carrot_1234">
+<input type=hidden name=sndStoreid value="<%= sndStoreid %>">
+<input type=hidden name=sndStoreno value="<%= sndStoreno %>">
+<input type=hidden name=sndUserId value="<%= sndUserId %>">
+<input type=hidden name=sndGoodname value="<%= sndGoodname %>">
+<input type=hidden name=sndAmount value="<%= sndAmount %>">
+<input type=hidden name=sndInstallmenttype value="0:2:3:4:5:6:7:8:9:10:11:12">
+<input type=hidden name=sndInteresttype value="NONE">
+<input type=hidden name=sndThemecolor value="">
+<input type=hidden name=sndOrdername value="<%= sndOrdername %>">
+<input type=hidden name=sndCashReceipt value="0">
+<input type=hidden name=sndEmail value="<%= sndEmail %>">
+
+	<input type=hidden name="sndReply"      value=""> <!-- ���� ������ -->
+	<input type=hidden name="sndCancelUrl"  value="http://210.181.28.134/store/MYPay/MYPayWeb.jsp"> <!-- ��� ���������� -->
+	<input type=hidden name="sndRetParam"   value="<%= referenceId %>"> <!-- sndReply , sndCancelUrl �� ���޵Ǿ���ϴ� �Ķ���� Ư������ ' " - ` �� ����ϽǼ� �����ϴ�. (����ǥ,�ֵ���ǥ,����,�������̼�)  -->
+	<input type=hidden name="sndCharSet"    value="UTF-8"> <!-- defalut : EUC-KR -->
+
+	<!-- pc���� rcv ���������� ���õǴ� �� -->
+	<input type=hidden name="reCommConId"   value="">
+	<input type=hidden name="reRetParam"    value="">
+</form>
+</body>
+
+<script language="javascript">
+
+var _KSPAY_WIN_NAME = '_KSPAY_WIN'
+
+var submitI = function (formid, ifrmName, iWinX, iWinY) {
+	let objP = document.getElementById('popup');
+	let objO = document.getElementById('overlay');
+
+    if (formid.target != ifrmName) {
+        if (objP == null) {
+            //var installpop = "<iframe id=\"payment-frame\" name=\"payment-frame\" width=\"820\" height=\"70\" scrolling=\"no\" frameborder=\"0\" allowtransparency=\"true\"></iframe>";
+            var installpop = ''
+            installpop +=
+                '<div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background: #000;  opacity: 0.7; z-index: 9999;" ></div>'
+            installpop +=
+                '<div id="popup" style="position:absolute; top:50%; left:50%; width:' +
+                iWinX +
+                'px; height:' +
+                iWinY +
+                'px; border-radius:20px; margin-left:-' +
+                parseInt(iWinX, 10) / 2 +
+                'px;margin-top:-' +
+                parseInt(iWinY, 10) / 2 +
+                'px;  z-index: 10000; text-align: center; " >'
+            //installpop += "<iframe id=\"payment-frame\" name=\"payment-frame\" src=\"\" width=" + iWinX + " height=" + iWinY + " scrolling=\"no\" frameborder=\"0\" allowtransparency=\"true\" style=\"background: #FFFFFF; border-radius:20px;\"  ></iframe>";
+            installpop += '</div>'
+
+            var attachElement = document.body
+            var newDiv
+            newDiv = document.createElement('span')
+            newDiv.innerHTML = installpop
+            attachElement.appendChild(newDiv)
+
+						objP = document.getElementById('popup');
+						objO = document.getElementById('overlay');
+        }
+    }
+		objP.style.display = 'block';
+		objO.style.display = 'block';
+
+    formid.method = 'get'
+    // formid.target = 'payment-frame'
+    // var _call_url = _KSPAY_URL
+    // _call_url = _call_url
+    // formid.action = 'http://210.181.28.134/store/MYPay/MYPayWebTot.jsp';
+    formid.submit()
+}
+
+	function _pay(_frm)
+	{
+		var width_	= 550;
+		var height_	= 850;
+		var left_	= screen.width;
+		var top_	= screen.height;
+		let action = '<%= MYPAY_URL %>';
+
+		left_ = left_/2 - (width_/2);
+		top_ = top_/2 - (height_/2);
+
+		_frm.sndReply.value=getLocalUrl("mypay_result");
+		_frm.sndCancelUrl.value=getLocalUrl("mypay_cancel");
+		_frm.action = action;
+		// _frm.action ='https://kspay.ksnet.to/store/MYPay/MYPayWebTot.jsp';
+		// _frm.action ='https://210.181.28.134/store/MYPay/MYPayWebTot.jsp';
+
+		if(is_mobile()){
+			_frm.target = "_self";
+		}else{
+
+			var u_agent = navigator.userAgent
+    var trident = u_agent.match(/Trident\/(\d.\d)/i)
+
+    if (trident != null) {
+        if (trident[1] == '5.0' || trident[1] == '6.0' || trident[1] == '7.0') {
+            iWinX = '820'
+            iWinY = '630'
+        } else {
+            iWinX = '822'
+            iWinY = '610'
+        }
+    } else {
+        iWinX = '822'
+        iWinY = '630'
+    }
+
+    if (
+        'undefined' != typeof _frm.iframeYn &&
+        null != _frm.iframeYn.value &&
+        _frm.iframeYn.value == 'N'
+    ) {
+        popupFlag = true
+    } else {
+        popupFlag = false
+    }
+
+      const referenceId = "<%= referenceId %>";
+			_frm.sndReply.value=getLocalUrl("mypay_rcv?referenceId="+ referenceId);
+			_frm.sndCancelUrl.value=getLocalUrl("mypay_cancel");
+			// op = window.open("",'AuthFrmUp', 'height='+height_+',width='+width_+',status=yes,scrollbars=no,resizable=no,left='+left_+',top='+top_+'');
+			// _frm.target = "AuthFrmUp";
+
+			if (!popupFlag) {
+        submitI(_frm, _KSPAY_WIN_NAME, iWinX, iWinY)
+    }
+
+		}
+		_frm.submit();
+	}
+	function getLocalUrl(mypage)
+	{
+		var myloc = location.href;
+		return myloc.substring(0, myloc.lastIndexOf('/')) + '/' + mypage;
+	}
+	function goResult()
+	{
+		document.payfrm.action = "./mypay_result.jsp";
+		document.payfrm.target = "_self";
+		document.payfrm.submit();
+	}
+	function is_mobile()
+	{
+		if(navigator.userAgent.match(/Android/i)){
+
+		}else if(navigator.userAgent.match(/iPhone|iPad|iPod/i)){
+
+		}else{
+			//PC
+			return false;
+		}
+		return true;
+	}
+
+  _pay(document.payfrm)
+</script>
+</html>

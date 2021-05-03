@@ -7,12 +7,13 @@
     <title>kspay result</title>
     <link rel="stylesheet" href="/css/master.css">
   </head>
-  https://member-calls2-kr-dev.unicity.com
+
+  <body>
+
+  </body>
+
   <script>
-var cancle_url = "/checkout/summary";
-	var failed_url = "/checkout/payment-response/failed";
-	var success_url = "/checkout/payment-response/success";
-/*
+    /*
 
 결제 취소 및 실패
 {
@@ -36,16 +37,29 @@ var cancle_url = "/checkout/summary";
   ECH: ''
 }
 */
+    var cancle_url = "/checkout/summary";
+      var failed_url = "/checkout/payment-response/failed";
+      var success_url = "/checkout/payment-response/success";
   function init(){
     var reCnclType =  '<%- reCnclType %>';
-    var reUrl =  '<%- reUrl %>';
-    if(Number(reCnclType) === 1) window.location.href = reUrl + cancle_url;
-    if(Number(reCnclType) === 0) window.location.href = reUrl + success_url;
+    var reUrl =  '';
+    var referenceId = '<%= ECHA %>';
+
+    if(window.location.hostname === 'localhost') reUrl = "http://localhost:3000";
+    else reUrl = "https://ushop-kr.unicity.com";
+
+    console.log('parent : ', parent);
+    if(Number(reCnclType) === 1) reUrl = reUrl + cancle_url;
+    if(Number(reCnclType) === 0) {
+      reUrl = reUrl + success_url+"?Ref="+referenceId;
+    }
+
+    console.log('reUrl : ',reUrl);
+
+    parent.window.location.href = reUrl;
+
+
   }
   init();
   </script>
-
-
-  <body>
-  </body>
 </html>
