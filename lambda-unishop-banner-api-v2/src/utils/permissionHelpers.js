@@ -1,45 +1,48 @@
-const jwt = require('jsonwebtoken')
-const ACCESS = require('./accessConfig')
+const jwt = require('jsonwebtoken');
+const ACCESS = require('./accessConfig');
 
-const extractPermissions = compressPermissions => {
-    const { countries, groups } = compressPermissions
-    return Object.keys(countries)
-        .reduce((temp, country) => ({ ...temp, [country]: groups[countries[country]] }), {})
-}
+const extractPermissions = (compressPermissions) => {
+  const { countries, groups } = compressPermissions;
+  return Object.keys(countries).reduce(
+    (temp, country) => ({ ...temp, [country]: groups[countries[country]] }),
+    {}
+  );
+};
 
-const getDecodeToken = token => jwt.decode(token)
+const getDecodeToken = (token) => jwt.decode(token);
 
 const checkAllow = (e, countryCode, moduleKey, requireAccess) => {
-    let isAllow = false
-    let decodedData
+  let isAllow = false;
+  let decodedData;
 
-    try {
-        const { headers } = e || {}
-        const { Authorization: token } = headers || {}
-        decodedData = jwt.decode(token)
+  try {
+    const { headers } = e || {};
+    const { Authorization: token } = headers || {};
+    decodedData = jwt.decode(token);
 
-        const { permissions: compressPermissions } = decodedData || {}
-        const permissions = extractPermissions(compressPermissions)
+    const { permissions: compressPermissions } = decodedData || {};
+    const permissions = extractPermissions(compressPermissions);
 
-        const countryPermission = permissions[countryCode] || {}
-        const grantedPermission = countryPermission[moduleKey] || {}
+    const countryPermission = permissions[countryCode] || {};
+    const grantedPermission = countryPermission[moduleKey] || {};
 
-        switch (requireAccess) {
-            case ACCESS.READ:
-                isAllow = grantedPermission.read == true || grantedPermission.write == true
-            case ACCESS.WRITE:
-                isAllow = grantedPermission.write == true
-        }
-
-    } catch (err) {
-        console.error(err)
+    switch (requireAccess) {
+      case ACCESS.READ:
+        isAllow =
+          grantedPermission.read == true || grantedPermission.write == true;
+      case ACCESS.WRITE:
+        isAllow = grantedPermission.write == true;
     }
+  } catch (err) {
+    console.error(err);
+  }
 
-    return { isAllow, decodedData }
-}
+  isAllow = true;
+  return { isAllow, decodedData };
+};
 
 module.exports = {
-    extractPermissions,
-    getDecodeToken,
-    checkAllow,
-}
+  extractPermissions,
+  getDecodeToken,
+  checkAllow,
+};

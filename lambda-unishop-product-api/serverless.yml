@@ -15,7 +15,7 @@ custom:
   customDomain:
     domainName: ${self:custom.domains.${self:provider.stage}}
     stage: ${self:provider.stage}
-    basePath: ${self:provider.environment.MODULE_KEY}
+    basePath: ${self:provider.environment.MODULE_KEY}-v1
   dbConfigs:
     dev:
       host: "calls-kr.cluster-cs23rdjjrds4.ap-northeast-2.rds.amazonaws.com"
@@ -48,6 +48,12 @@ provider:
       - sg-0eae031a176831694
     subnetIds:
       - subnet-0204937de4af72758
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::*"
+
 functions:
   getProductList:
     handler: src/functions/getProductList.handler
@@ -57,6 +63,7 @@ functions:
           method: get
           cors: true
     timeout: 30
+
   getProduct:
     handler: src/functions/getProduct.handler
     events:
@@ -64,6 +71,7 @@ functions:
           path: /data/{countryCode}/{id}
           method: get
           cors: true
+
   createProduct:
     handler: src/functions/createProduct.handler
     events:
@@ -74,6 +82,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editProduct:
     handler: src/functions/editProduct.handler
     events:
@@ -84,6 +93,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   removeProduct:
     handler: src/functions/removeProduct.handler
     events:
@@ -94,6 +104,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   getSchemaProduct:
     handler: src/functions/getSchemaProduct.handler
     events:
@@ -101,6 +112,7 @@ functions:
           path: /schema/product/{countryCode}
           method: get
           cors: true
+
   getWarehouseList:
     handler: src/functions/getWarehouseList.handler
     events:
@@ -108,6 +120,7 @@ functions:
           path: /listData/warehouse
           method: get
           cors: true
+
   getListWarehouseByCountry:
     handler: src/functions/getListWarehouseByCountry.handler
     events:
@@ -115,6 +128,7 @@ functions:
           path: /list/warehouse/{countryCode}
           method: get
           cors: true
+
   getListCategoriesByCountry:
     handler: src/functions/getListCategoriesByCountry.handler
     events:
@@ -122,6 +136,7 @@ functions:
           path: /list/category/{countryCode}
           method: get
           cors: true
+
   searchProducts:
     handler: src/functions/searchProducts.handler
     events:
@@ -129,6 +144,7 @@ functions:
           path: /search/products/{countryCode}
           method: get
           cors: true
+
   editHotProducts:
     handler: src/functions/editHotProducts.handler
     events:
@@ -139,6 +155,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editFeaturedProducts:
     handler: src/functions/editFeaturedProducts.handler
     events:
@@ -149,6 +166,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editAllowBackorderProducts:
     handler: src/functions/editAllowBackorderProducts.handler
     events:
@@ -159,6 +177,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editBufferQuantityProducts:
     handler: src/functions/editBufferQuantityProducts.handler
     events:
@@ -169,6 +188,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editStatusProducts:
     handler: src/functions/editStatusProducts.handler
     events:
@@ -179,6 +199,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   getSortListCategories:
     handler: src/functions/getSortListCategories.handler
     events:
@@ -186,6 +207,7 @@ functions:
           path: /sortList/categories/{countryCode}
           method: get
           cors: true
+
   editSortListCategories:
     handler: src/functions/editSortListCategories.handler
     events:
@@ -196,6 +218,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   editSortListProducts:
     handler: src/functions/editSortListProducts.handler
     events:
@@ -206,6 +229,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   removeMultipleProducts:
     handler: src/functions/removeMultipleProducts.handler
     events:
@@ -216,6 +240,7 @@ functions:
           authorizer:
             arn: ${self:custom.useVerifyTokenArn}
             resultTtlInSeconds: 0
+
   getProductListByItemCode:
     handler: src/functions/getProductListByItemCode.handler
     events:

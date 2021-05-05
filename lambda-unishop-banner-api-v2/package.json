@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-deploy": "serverless deploy --verbose --stage dev",
+    "dev-deploy:bannersCreate": "serverless deploy function --function bannersCreate --verbose --stage dev",
+    "dev-deploy:bannersEdit": "serverless deploy function --function bannersEdit --verbose --stage dev",
     "prod-deploy": "serverless deploy --verbose --stage prod"
   },
   "repository": {
