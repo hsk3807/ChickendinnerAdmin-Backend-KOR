@@ -1,13 +1,13 @@
-const httpStatus = require('http-status');
-const pick = require('../utils/pick');
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
-const PayService = require('../services/pay.service');
-const TalkService = require('../services/talk.service');
-const { ResultCode, CommonCode } = require('../code');
-const Config = require('../env');
-const KSPayWebHostBean = require('../classes/KSPayWebHostBean');
-const MYPayWebHostBean = require('../classes/MYPayWebHostBean');
+const httpStatus = require("http-status");
+const pick = require("../utils/pick");
+const ApiError = require("../utils/ApiError");
+const catchAsync = require("../utils/catchAsync");
+const PayService = require("../services/pay.service");
+const TalkService = require("../services/talk.service");
+const { ResultCode, CommonCode } = require("../code");
+const Config = require("../env");
+const KSPayWebHostBean = require("../classes/KSPayWebHostBean");
+const MYPayWebHostBean = require("../classes/MYPayWebHostBean");
 const {
   base64Enc,
   base64Dec,
@@ -19,14 +19,14 @@ const {
   get_etoken,
   numberWithCommas,
   getFullDate2,
-} = require('../utils');
-let iconv = require('iconv-lite');
-const { PAY_TYPE, TALK_TEMPLATE_TYPE } = require('../utils/Constants');
-const url = require('url');
+} = require("../utils");
+let iconv = require("iconv-lite");
+const { PAY_TYPE, TALK_TEMPLATE_TYPE } = require("../utils/Constants");
+const url = require("url");
 
 const getOrderId = (order_id) => {
   try {
-    let order_id_tmp = order_id.split('-');
+    let order_id_tmp = order_id.split("-");
     order_id = order_id_tmp.length === 2 ? order_id_tmp[1] : order_id;
   } catch (err) {}
 
@@ -91,20 +91,32 @@ const upay = catchAsync(async (req, res) => {
   try {
     const body = req.body;
     const { payType, sndGoodname, sndAmount, reUrl, payData, order } = body;
+
+    let order_id = undefined;
+
     //공통 validation 체크
     switch (payType) {
       //통합모듈 ( 가상계좌, 신용카드 )
       case PAY_TYPE.VIRTUAL_ACCOUNT:
       case PAY_TYPE.CREDIT_CARD:
+        try {
+          const res = await PayService.loadOrderDetail(req.body.referenceId);
+          if (res) order_id = res.order_id;
+        } catch (err) {}
+
         if (req.useragent.isMobile)
-          res.render('kspay_wh_m', {
+          res.render("kspay_wh_m", {
             ...req.body,
             sndStoreid: Config.upay.storeid,
+            sndInstallmenttype: Number(req.body.sndInstallmenttype),
+            sndOrdernumber: order_id,
           });
         else
-          res.render('kspay_wh', {
+          res.render("kspay_wh", {
             ...req.body,
             sndStoreid: Config.upay.storeid,
+            sndInstallmenttype: Number(req.body.sndInstallmenttype),
+            sndOrdernumber: order_id,
           });
         break;
 
@@ -112,9 +124,15 @@ const upay = catchAsync(async (req, res) => {
       case PAY_TYPE.MY_PAY:
         const curr_date_14 = getFullDate();
         const p_data =
-          curr_date_14 + ':servicetoken=' + Config.mypay.servicetoken;
+          curr_date_14 + ":servicetoken=" + Config.mypay.servicetoken;
 
-        const etoken = get_etoken(Config.mypay.mhkey, curr_date_14, '');
+        const etoken = get_etoken(Config.mypay.mhkey, curr_date_14, "");
+
+        try {
+          const res = await PayService.loadOrderDetail(req.body.referenceId);
+          if (res) order_id = res.order_id;
+        } catch (err) {}
+
         const params = {
           etoken,
           MYPAY_URL: Config.mypay.url,
@@ -122,11 +140,12 @@ const upay = catchAsync(async (req, res) => {
           sndStoreno: Config.mypay.storeno,
           sndMsalt: Config.mypay.msalt,
           sndMpayMsalt: Config.mypay.mpaymsalt,
+          sndOrdernumber: order_id,
         };
 
         if (req.useragent.isMobile)
-          res.render('mypay_order', { ...req.body, ...params });
-        else res.render('mypay_order', { ...req.body, ...params });
+          res.render("mypay_order", { ...req.body, ...params });
+        else res.render("mypay_order", { ...req.body, ...params });
         break;
     }
   } catch (err) {}
@@ -143,8 +162,8 @@ const easypay = catchAsync(async (req, res) => {
   try {
     const data = await PayService.easyPay(req.body);
     if (
-      !data.hasOwnProperty('rMessage2') ||
-      !data.hasOwnProperty('rMessage1')
+      !data.hasOwnProperty("rMessage2") ||
+      !data.hasOwnProperty("rMessage1")
       // ||
       // !data.hasOwnProperty('json_result')
     )
@@ -157,7 +176,7 @@ const easypay = catchAsync(async (req, res) => {
       message1: data.rMessage1,
       message2: data.rMessage2,
     };
-    if (data.rMessage2.indexOf('OK') === -1)
+    if (data.rMessage2.indexOf("OK") === -1)
       return res.r(
         result,
         new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
@@ -165,7 +184,7 @@ const easypay = catchAsync(async (req, res) => {
     result.json_result = json_result;
     return res.r(result);
   } catch (err) {
-    console.log('err : ', err);
+    console.log("err : ", err);
     return res.r(
       { error: err },
       new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
@@ -178,7 +197,7 @@ const easypay = catchAsync(async (req, res) => {
  */
 const kspay_wh_rcv = catchAsync(async (req, res) => {
   const { reCommConId } = req.body;
-  res.render('kspay_wh_rcv', { ...req.body, ...req.query });
+  res.render("kspay_wh_rcv", { ...req.body, ...req.query });
 });
 
 /**
@@ -197,13 +216,13 @@ const kspay_wh_result = catchAsync(async (req, res) => {
   } catch (err) {}
 
   if (!isSuccess) {
-    ipg.rvdata.authyn = 'X';
-    ipg.rvdata.msg1 = '취소';
+    ipg.rvdata.authyn = "X";
+    ipg.rvdata.msg1 = "취소";
   } else {
     //가상계좌 발급
-    if (ipg.rvdata.result === '6001') {
+    if (ipg.rvdata.result === "6001") {
       const res = await PayService.updateVbank(ipg.rvdata);
-      if (res.code === 'S') {
+      if (res.code === "S") {
         template_code = TALK_TEMPLATE_TYPE.VIRTUAL_ACCOUNT;
         result = true;
       }
@@ -211,7 +230,7 @@ const kspay_wh_result = catchAsync(async (req, res) => {
     //카드결제 완료
     else {
       const res = await PayService.updateUpay(ipg.rvdata);
-      if (res.code === 'S') {
+      if (res.code === "S") {
         template_code = TALK_TEMPLATE_TYPE.PAYMENT_SUCCESS;
         result = true;
       }
@@ -226,7 +245,7 @@ const kspay_wh_result = catchAsync(async (req, res) => {
     }
   }
 
-  res.render('kspay_wh_result', {
+  res.render("kspay_wh_result", {
     ...req.body,
     rvdata: ipg.rvdata,
   });
@@ -236,16 +255,16 @@ const kspay_wh_result = catchAsync(async (req, res) => {
  * @description Mypay Popup redirection 처리
  */
 const mypay_rcv = catchAsync(async (req, res) => {
-  console.log('#### mypay_rcv > req.body : ', req.body);
-  res.render('mypay_rcv', { ...req.body, ...req.query });
+  console.log("#### mypay_rcv > req.body : ", req.body);
+  res.render("mypay_rcv", { ...req.body, ...req.query });
 });
 
 /**
  * @description Mypay 결제 취소
  */
 const mypay_cancel = catchAsync(async (req, res) => {
-  console.log('#### mypay_cancel > req.body : ', req.body);
-  res.render('mypay_cancel', { ...req.body, ...req.query });
+  console.log("#### mypay_cancel > req.body : ", req.body);
+  res.render("mypay_cancel", { ...req.body, ...req.query });
 });
 
 /**
@@ -265,12 +284,12 @@ const mypay_result = catchAsync(async (req, res) => {
   } catch (err) {}
 
   if (!isSuccess) {
-    ipg.rvdata.authyn = 'X';
-    ipg.rvdata.msg1 = '취소';
+    ipg.rvdata.authyn = "X";
+    ipg.rvdata.msg1 = "취소";
   } else {
     //카드결제 완료
     const res = await PayService.updateMypay(ipg.rvdata);
-    if (res.code === 'S') result = true;
+    if (res.code === "S") result = true;
   }
 
   //메시지 전송
@@ -279,7 +298,7 @@ const mypay_result = catchAsync(async (req, res) => {
     if (res) await sendMessage(res, template_code);
   }
 
-  res.render('mypay_result', { ...req.body, ...req.query });
+  res.render("mypay_result", { ...req.body, ...req.query });
 });
 
 module.exports = {

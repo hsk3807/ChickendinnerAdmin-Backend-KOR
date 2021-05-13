@@ -386,7 +386,7 @@ const payFailed = () => {
 <!--결제 완료후 결과값을 받아처리할 결과페이지의 주소-->
 <form name=KSPayWeb method=post>
     <input type=hidden	name=sndStoreid value='<%= sndStoreid %>'>
-    <input type=hidden	name=sndOrdernumber value='carrot_1234'>
+    <input type=hidden	name=sndOrdernumber value='<%= sndOrdernumber %>'>
     <input type=hidden	name=sndGoodname value='<%= sndGoodname %>'>
     <input type=hidden	name=sndAmount value='<%= sndAmount %>'>
     <input type=hidden	name=sndOrdername value='<%= sndOrdername %>'>
@@ -414,8 +414,8 @@ const payFailed = () => {
 	<!-- 할부개월수 선택범위 -->
 	<!--상점에서 적용할 할부개월수를 세팅합니다. 여기서 세팅하신 값은 결제창에서 고객이 스크롤하여 선택하게 됩니다 -->
 	<!--아래의 예의경우 고객은 0~12개월의 할부거래를 선택할수있게 됩니다. -->
-	<input type=hidden	name=sndInstallmenttype value="ALL(0:2:3:4:5:6:7:8:9:10:11:12)">
-
+	<input type=hidden	name=sndInstallmenttype value="<%= sndInstallmenttype %>">
+	
 	<!-- 가맹점부담 무이자할부설정 -->
 	<!-- 카드사 무이자행사만 이용하실경우  또는 무이자 할부를 적용하지 않는 업체는  "NONE"로 세팅  -->
 	<!-- 예 : 전체카드사 및 전체 할부에대해서 무이자 적용할 때는 value="ALL" / 무이자 미적용할 때는 value="NONE" -->
