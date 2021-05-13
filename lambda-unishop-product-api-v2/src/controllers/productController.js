@@ -135,6 +135,7 @@ const toPublishData = (r, { status, tagBackOrder, tagOutOfStock }) => {
     category_id: r.category_id,
     delay_phrase: r.delay_phrase,
     is_delay_chk: r.is_delay_chk,
+    is_pack: r.is_pack,
     qty: r.qty
   };
 };
