@@ -317,7 +317,6 @@ const edit = async (e) => {
 const deleteOne = async (e) => {
   try {
     const { Authorization } = e.headers;
-    e.body.countryCode = 'KOR';
     const { id } = e.pathParameters || {};
     const data = await BannerService.getById(id);
 
