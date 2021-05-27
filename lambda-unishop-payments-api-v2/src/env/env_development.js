@@ -10,9 +10,9 @@ module.exports = {
     url: 'https://kspay.ksnet.to/store/MYPay/MYPayWebTot.jsp',
     default_params:
       'authyn`trno`trddt`trdtm`amt`acno`msg1`msg2`ordno`result`resultcd`bnkcd`storeid`username`email`goodname`mobile`cbauthyn`cbtrno`cbauthno`cbmsg1`cbmsg2`ksnet_svc_tkn`statuscd',
-    storeid: '2001104865',
-    mhkey: 'D693CCFE4C898D1086BC37B3B42812A1',
-    mekey: '2D5D651BFBB0141A83E769022BBF6BEE',
+    storeid: '2001104957',
+    mhkey: '3F75BAFE7A742952997D3F5244B3B92F',
+    mekey: 'F8ECDEF83483FF7A3ED45177BD55916C',
     msalt: 'MA01',
     mpaymsalt: '01gs1mn48W',
     servicetoken: '',

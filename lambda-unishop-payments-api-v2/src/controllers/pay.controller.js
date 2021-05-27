@@ -55,7 +55,7 @@ const getMessageData = (data, template_code) => {
     login_id,
   } = data;
   const request_data = JSON.parse(data.request_data);
-  const { mobile, login_native_name, total_pv } = request_data.orderData;
+  const { mobile, login_native_name, total_pv, orderTermsJson} = request_data.orderData;
 
   order_id = getOrderId(order_id);
 
@@ -66,7 +66,7 @@ const getMessageData = (data, template_code) => {
 
     params = {
       dstaddr: mobile,
-      variable: `${order_id}|${bank_name}|${bank_ref}|${login_native_name}|${numberWithCommas(
+      variable: `${order_id}|${bank_name}|${bank_ref}|${orderTermsJson.order.shipToName.firstName}|${numberWithCommas(
         backoffice_price
       )}|${getFullDate2(stamp_created_dt)}`,
     };
@@ -150,38 +150,35 @@ const upay = catchAsync(async (req, res) => {
     }
   } catch (err) {}
 
-  return;
-  if (!payDataJson || !orderJson) {
-    return res.r(
-      undefined,
-      new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
-    );
-  }
 });
 const easypay = catchAsync(async (req, res) => {
   try {
     const data = await PayService.easyPay(req.body);
+
     if (
       !data.hasOwnProperty("rMessage2") ||
       !data.hasOwnProperty("rMessage1")
       // ||
       // !data.hasOwnProperty('json_result')
-    )
-      return res.r(
-        undefined,
-        new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
-      );
+    ) return res.r(
+      undefined,
+      new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
+    );
+      
     let result = {
       // ...data.json_result,
       message1: data.rMessage1,
       message2: data.rMessage2,
+      referenceId : data.referenceId
     };
-    if (data.rMessage2.indexOf("OK") === -1)
+
+    if(data.code === 'S'){
+    }else{
       return res.r(
         result,
-        new ResultCode().getCodeMsg(CommonCode.COMMON_0005_CODE)
+        new ResultCode().getCodeMsg(CommonCode.COMMON_0006_CODE)
       );
-    result.json_result = json_result;
+    }
     return res.r(result);
   } catch (err) {
     console.log("err : ", err);
@@ -238,12 +235,12 @@ const kspay_wh_result = catchAsync(async (req, res) => {
   }
 
   //메시지 전송
-  if (result) {
-    const res = await PayService.loadOrderDetail(ipg.rvdata.referenceId);
-    if (res) {
-      if (template_code) await sendMessage(res, template_code);
-    }
-  }
+  // if (result) {
+  //   const res = await PayService.loadOrderDetail(ipg.rvdata.referenceId);
+  //   if (res) {
+  //     if (template_code) await sendMessage(res, template_code);
+  //   }
+  // }
 
   res.render("kspay_wh_result", {
     ...req.body,
@@ -293,10 +290,10 @@ const mypay_result = catchAsync(async (req, res) => {
   }
 
   //메시지 전송
-  if (result) {
-    const res = await PayService.loadOrderDetail(ipg.rvdata.referenceId);
-    if (res) await sendMessage(res, template_code);
-  }
+  // if (result) {
+  //   const res = await PayService.loadOrderDetail(ipg.rvdata.referenceId);
+  //   if (res) await sendMessage(res, template_code);
+  // }
 
   res.render("mypay_result", { ...req.body, ...req.query });
 });
