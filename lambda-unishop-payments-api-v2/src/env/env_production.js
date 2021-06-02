@@ -4,6 +4,8 @@ module.exports = {
   unifoApiPath: 'https://member-kr.unicity.com/unifoapi/v1/KR',
   upay: {
     storeid: '2001104865',
+    creditCardStoreId : '2001104865',
+    virtualAccountStoreId : '2001106709',
   },
   mypay: {
     apiUrl: 'https://kspay.ksnet.to/store/MYPay/web_host/recv_jpost_tot.jsp',

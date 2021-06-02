@@ -107,14 +107,14 @@ const upay = catchAsync(async (req, res) => {
         if (req.useragent.isMobile)
           res.render("kspay_wh_m", {
             ...req.body,
-            sndStoreid: Config.upay.storeid,
+            sndStoreid: payType === PAY_TYPE.VIRTUAL_ACCOUNT ? Config.upay.virtualAccountStoreId : Config.upay.creditCardStoreId,
             sndInstallmenttype: Number(req.body.sndInstallmenttype),
             sndOrdernumber: order_id,
           });
         else
           res.render("kspay_wh", {
             ...req.body,
-            sndStoreid: Config.upay.storeid,
+            sndStoreid: payType === PAY_TYPE.VIRTUAL_ACCOUNT ? Config.upay.virtualAccountStoreId : Config.upay.creditCardStoreId,
             sndInstallmenttype: Number(req.body.sndInstallmenttype),
             sndOrdernumber: order_id,
           });
@@ -155,6 +155,7 @@ const easypay = catchAsync(async (req, res) => {
   try {
     const data = await PayService.easyPay(req.body);
 
+    console.log('data ;', data);
     if (
       !data.hasOwnProperty("rMessage2") ||
       !data.hasOwnProperty("rMessage1")
