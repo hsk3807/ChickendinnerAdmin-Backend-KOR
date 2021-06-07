@@ -128,13 +128,16 @@ const upay = catchAsync(async (req, res) => {
 
         const etoken = get_etoken(Config.mypay.mhkey, curr_date_14, "");
 
+        //const edata = encrypt_msg(Config.mypay.mekey, p_data);
+
         try {
           const res = await PayService.loadOrderDetail(req.body.referenceId);
           if (res) order_id = res.order_id;
         } catch (err) {}
 
         const params = {
-          etoken,
+          sndEtoken : etoken,
+          //sndEdata : edata,
           MYPAY_URL: Config.mypay.url,
           sndStoreid: Config.mypay.storeid,
           sndStoreno: Config.mypay.storeno,
@@ -269,7 +272,7 @@ const mypay_cancel = catchAsync(async (req, res) => {
  * @description Mypay 결제 결과 처리
  */
 const mypay_result = catchAsync(async (req, res) => {
-  const { reCommConId, reRetParam } = req.body;
+  const { reCommConId, reRetParam, ksnet_svc_tkn } = req.body;
 
   const ipg = new MYPayWebHostBean({
     payKey: reCommConId,
@@ -279,6 +282,7 @@ const mypay_result = catchAsync(async (req, res) => {
   let template_code = TALK_TEMPLATE_TYPE.PAYMENT_SUCCESS;
   try {
     ipg.rvdata.referenceId = reRetParam;
+    ipg.rvdata.ksnet_svc_tkn = ksnet_svc_tkn;
   } catch (err) {}
 
   if (!isSuccess) {

@@ -128,7 +128,9 @@ const encrypt_msg = (mekey, msg) => {
     const iv = new ArrayBuffer(16);
 
     const mbytes = msg.console.log('kbytes : ', kbytes);
+    return mbytes;
   } catch (err) {}
+  return null;
 };
 
 const numberWithCommas = (x) => {
