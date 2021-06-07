@@ -17,7 +17,7 @@ module.exports = {
     mekey: 'F8ECDEF83483FF7A3ED45177BD55916C',
     msalt: 'MA01',
     mpaymsalt: '01gs1mn48W',
-    servicetoken: '',
+    servicetoken: 'Enm3-R1Hg1oQ0Pu5k2-v5JGYU87F-g',
     mtype: '1',
     storeno: 'KSNET00033',
   },
