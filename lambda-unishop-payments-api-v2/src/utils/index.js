@@ -144,21 +144,22 @@ const encrypt_msg = (mekey, msg) => {
 
   try {
     // const kbytes = hex_decode(mekey, true); // secretkey로 사용
-    const iv = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
+    // const iv = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
 
-    const mbytes = string_to_bytes(msg); //암호화할 데이터
+    // const mbytes = string_to_bytes(msg); //암호화할 데이터
 
-    console.log('aes-128-cbc', mekey, iv);
-    const cipher  = crypto.createCipheriv('aes-128-cbc', Buffer.from(mekey, 'utf-8'), iv);
-    let ebytes = cipher.update(mbytes, 'utf8', 'base64')
-    ebytes += cipher.final('base64');
+    // console.log('aes-128-cbc', mekey, iv);
+    // const cipher  = crypto.createCipheriv('aes-128-cbc', Buffer.from(mekey, 'utf-8'), iv);
+    // let ebytes = cipher.update(mbytes, 'utf8', 'base64')
+    // ebytes += cipher.final('base64');
 
-    console.log(ebytes);
+    // console.log(ebytes);
     // return hex_encode(ebytes);
 
   } catch (err) {
     console.log("err : ", err);
   }
+  return null;
 };
 
 const numberWithCommas = (x) => {

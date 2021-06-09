@@ -96,6 +96,8 @@ const upay = catchAsync(async (req, res) => {
     const { payType, sndGoodname, sndAmount, reUrl, payData, order } = body;
 
     let order_id = undefined;
+    let etoken = undefined;
+    let edata = undefined;
 
     //공통 validation 체크
     switch (payType) {
@@ -126,35 +128,16 @@ const upay = catchAsync(async (req, res) => {
       //마이페이
       case PAY_TYPE.MY_PAY:
 
-      console.log('body : ', body);
-
-
-
-      //servicetoken 정보 가지고 오기
-      const {payerId : user_id} = body;
-      let serviceToken = '';
-
-      try{
-        const res = await UserService.loadUserServiceToken({where : {user_id }});
-        if(res.success){
-          if(res.data.length > 0) serviceToken = res.data[0].ksnet_svc_tkn;
-        }
-      }catch(err){}
-    
-        const curr_date_14 = getFullDate();
-
-        const etoken = get_etoken(Config.mypay.mhkey, curr_date_14, "");
-        const p_data = curr_date_14 + ":servicetoken=" + serviceToken;
-
-        // const edata = encrypt_msg(Config.mypay.mekey, p_data);
-
         try {
           const res = await PayService.loadOrderDetail(req.body.referenceId);
           if (res) order_id = res.order_id;
+          if (res) edata = res.edata;
+          if (res) etoken = res.etoken;
         } catch (err) {}
 
         const params = {
-          etoken,
+          sndEtoken : etoken,
+          sndEdata : edata,
           MYPAY_URL: Config.mypay.url,
           sndStoreid: Config.mypay.storeid,
           sndStoreno: Config.mypay.storeno,
@@ -175,7 +158,6 @@ const easypay = catchAsync(async (req, res) => {
   try {
     const data = await PayService.easyPay(req.body);
 
-    console.log('data ;', data);
     if (
       !data.hasOwnProperty("rMessage2") ||
       !data.hasOwnProperty("rMessage1")
