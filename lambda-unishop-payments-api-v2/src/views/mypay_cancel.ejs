@@ -19,10 +19,16 @@
 		var reUrl = '';
     if(window.location.hostname === 'localhost') reUrl = "http://localhost:3000";
     else reUrl = "https://ushop-kr.unicity.com";
-
+    var isMobile = '<%= isMobile %>';
 		reUrl = reUrl + cancle_url;
-    parent.window.location.href = reUrl;
-    window.close();
+    if(isMobile){
+      // window.location.href = reUrl;
+      parent.window.location.href = reUrl;
+    }else{
+      // parent.window.location.href = reUrl;
+      window.close();
+    }
+    
   }
   init();
   </script>

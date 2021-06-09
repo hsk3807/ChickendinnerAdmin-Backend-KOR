@@ -4,6 +4,7 @@ const { Base64 } = require('js-base64');
 // var assert = require('assert');
 let iconv = require('iconv-lite');
 var sha256 = require('js-sha256').sha256;
+const crypto = require('crypto');
 
 const buildUrl = (url, parameters) => {
   let _qs = '';
@@ -97,6 +98,10 @@ const get_etoken = (mkey, curr_date_14, sign_msg) => {
   }
 };
 
+const hex_encode = (bytes) => {
+  if(!bytes) return null;
+}
+
 const hex_decode = (sStr) => {
   if (!sStr) return null;
 
@@ -105,7 +110,10 @@ const hex_decode = (sStr) => {
 
   var buffer = new ArrayBuffer(slen / 2);
   for (var i = 0, j = 0; i < slen; i += 2, j++) {
+
+
     let hex_string = sStr.substring(i, i + 2);
+
     hex_string =
       hex_string.charAt(1) != 'X' && hex_string.charAt(1) != 'x'
         ? (hex_string = '0X' + hex_string)
@@ -115,20 +123,42 @@ const hex_decode = (sStr) => {
         ? (hex_string = hex_string - 0x00)
         : (hex_string = hex_string - 0xff - 1);
     buffer[j] = hex_string;
+    
   }
 
   return buffer;
 };
 
+const string_to_bytes = (str) => {
+  var bytes = [];
+  for(var i = 0; i < str.length; i++) {
+      var char = str.charCodeAt(i);
+      bytes.push(char >>> 8);
+      bytes.push(char & 0xFF);
+  }
+  return bytes;
+
+}
 const encrypt_msg = (mekey, msg) => {
   if (!msg || msg.length === 0) return;
 
   try {
-    const kbytes = hex_decode(mekey);
-    const iv = new ArrayBuffer(16);
+    // const kbytes = hex_decode(mekey, true); // secretkey로 사용
+    const iv = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
 
-    const mbytes = msg.console.log('kbytes : ', kbytes);
-  } catch (err) {}
+    const mbytes = string_to_bytes(msg); //암호화할 데이터
+
+    console.log('aes-128-cbc', mekey, iv);
+    const cipher  = crypto.createCipheriv('aes-128-cbc', Buffer.from(mekey, 'utf-8'), iv);
+    let ebytes = cipher.update(mbytes, 'utf8', 'base64')
+    ebytes += cipher.final('base64');
+
+    console.log(ebytes);
+    // return hex_encode(ebytes);
+
+  } catch (err) {
+    console.log("err : ", err);
+  }
 };
 
 const numberWithCommas = (x) => {

@@ -4,6 +4,8 @@ const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const PayService = require("../services/pay.service");
 const TalkService = require("../services/talk.service");
+const UserService = require("../services/user.service");
+
 const { ResultCode, CommonCode } = require("../code");
 const Config = require("../env");
 const KSPayWebHostBean = require("../classes/KSPayWebHostBean");
@@ -19,6 +21,7 @@ const {
   get_etoken,
   numberWithCommas,
   getFullDate2,
+  encrypt_msg
 } = require("../utils");
 let iconv = require("iconv-lite");
 const { PAY_TYPE, TALK_TEMPLATE_TYPE } = require("../utils/Constants");
@@ -122,11 +125,28 @@ const upay = catchAsync(async (req, res) => {
 
       //마이페이
       case PAY_TYPE.MY_PAY:
+
+      console.log('body : ', body);
+
+
+
+      //servicetoken 정보 가지고 오기
+      const {payerId : user_id} = body;
+      let serviceToken = '';
+
+      try{
+        const res = await UserService.loadUserServiceToken({where : {user_id }});
+        if(res.success){
+          if(res.data.length > 0) serviceToken = res.data[0].ksnet_svc_tkn;
+        }
+      }catch(err){}
+    
         const curr_date_14 = getFullDate();
-        const p_data =
-          curr_date_14 + ":servicetoken=" + Config.mypay.servicetoken;
 
         const etoken = get_etoken(Config.mypay.mhkey, curr_date_14, "");
+        const p_data = curr_date_14 + ":servicetoken=" + serviceToken;
+
+        // const edata = encrypt_msg(Config.mypay.mekey, p_data);
 
         try {
           const res = await PayService.loadOrderDetail(req.body.referenceId);
@@ -262,7 +282,8 @@ const mypay_rcv = catchAsync(async (req, res) => {
  */
 const mypay_cancel = catchAsync(async (req, res) => {
   console.log("#### mypay_cancel > req.body : ", req.body);
-  res.render("mypay_cancel", { ...req.body, ...req.query });
+
+  res.render("mypay_cancel", { ...req.body, ...req.query, isMobile : req.useragent.isMobile });
 });
 
 /**
@@ -296,7 +317,7 @@ const mypay_result = catchAsync(async (req, res) => {
   //   if (res) await sendMessage(res, template_code);
   // }
 
-  res.render("mypay_result", { ...req.body, ...req.query });
+  res.render("mypay_result", { ...req.body, ...req.query, isMobile : req.useragent.isMobile });
 });
 
 module.exports = {
