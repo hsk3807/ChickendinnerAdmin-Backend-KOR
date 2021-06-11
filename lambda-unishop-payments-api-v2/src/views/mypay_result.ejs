@@ -28,6 +28,7 @@
     var isMobile = '<%= isMobile %>';
     if(isMobile){
       parent.window.location.href = reUrl;
+      window.close();
     }else{
       parent.window.location.href = reUrl;
       window.close();
