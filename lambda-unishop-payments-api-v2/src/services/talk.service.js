@@ -9,7 +9,7 @@ const getCode = (template_code) => {
   let code = undefined;
   if (template_code === TALK_TEMPLATE_TYPE.VIRTUAL_ACCOUNT) code = 'SJT_060974';
   else if (template_code === TALK_TEMPLATE_TYPE.ACCOUNT_LINK)
-    code = 'SJT_062552';
+    code = 'SJT_061493';  //SJT_061493
   else code = 'SJT_061047';
 
   return code;
